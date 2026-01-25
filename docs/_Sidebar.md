@@ -27,7 +27,7 @@
 * [Sorun Giderme](sorun-giderme)
 
 -------
-
+English
 ------- 
 
 ## Getting Started
