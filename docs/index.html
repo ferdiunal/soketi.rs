@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Soketi.rs - High-performance, Pusher-compatible WebSocket server written in Rust">
+    <meta name="keywords" content="websocket, pusher, rust, real-time, soketi, websocket-server">
+    <meta name="author" content="Ferdi Ünal">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://github.com/ferdiunal/soketi.rs">
+    <meta property="og:title" content="Soketi.rs - High-Performance WebSocket Server">
+    <meta property="og:description" content="Pusher-compatible WebSocket server written in Rust with Redis clustering support">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://github.com/ferdiunal/soketi.rs">
+    <meta property="twitter:title" content="Soketi.rs - High-Performance WebSocket Server">
+    <meta property="twitter:description" content="Pusher-compatible WebSocket server written in Rust with Redis clustering support">
+    
+    <title>Soketi.rs - High-Performance WebSocket Server</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 60px 40px;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .feature {
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .feature h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 40px 0;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .footer {
+            background: #2d3748;
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+        
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .header p {
+                font-size: 1.1em;
+            }
+            
+            .content {
+                padding: 40px 20px;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Soketi.rs</h1>
+            <p>High-Performance WebSocket Server</p>
+        </div>
+        
+        <div class="content">
+            <div style="text-align: center; margin-bottom: 40px;">
+                <p style="font-size: 1.2em; color: #666;">
+                    A Pusher-compatible WebSocket server written in Rust.<br>
+                    Built for speed, scalability, and reliability.
+                </p>
+            </div>
+            
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number">100K+</div>
+                    <div class="stat-label">Concurrent Connections</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">1M+</div>
+                    <div class="stat-label">Messages/Second</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">&lt;1ms</div>
+                    <div class="stat-label">Average Latency</div>
+                </div>
+            </div>
+            
+            <div class="features">
+                <div class="feature">
+                    <h3>⚡ High Performance</h3>
+                    <p>Built with Rust for maximum speed and efficiency. Handle millions of messages per second.</p>
+                </div>
+                
+                <div class="feature">
+                    <h3>🔄 Horizontal Scaling</h3>
+                    <p>Redis adapter for multi-server deployments. Scale to millions of concurrent connections.</p>
+                </div>
+                
+                <div class="feature">
+                    <h3>🔐 Secure</h3>
+                    <p>Built-in support for private and presence channels with authentication.</p>
+                </div>
+                
+                <div class="feature">
+                    <h3>📊 Monitoring</h3>
+                    <p>Prometheus metrics for comprehensive monitoring and alerting.</p>
+                </div>
+                
+                <div class="feature">
+                    <h3>🐳 Docker Ready</h3>
+                    <p>Production-ready Docker images with Nginx and Caddy support.</p>
+                </div>
+                
+                <div class="feature">
+                    <h3>🗄️ Multiple Backends</h3>
+                    <p>Support for PostgreSQL, MySQL, and DynamoDB for app management.</p>
+                </div>
+            </div>
+            
+            <div class="buttons">
+                <a href="https://github.com/ferdiunal/soketi.rs" class="btn btn-primary">
+                    View on GitHub
+                </a>
+                <a href="en/getting-started.html" class="btn btn-secondary">
+                    Get Started
+                </a>
+                <a href="https://hub.docker.com/r/funal/soketi-rs" class="btn btn-secondary">
+                    Docker Hub
+                </a>
+            </div>
+            
+            <div style="margin-top: 60px; padding: 30px; background: #f8f9fa; border-radius: 10px;">
+                <h2 style="text-align: center; margin-bottom: 20px;">Quick Start</h2>
+                <pre style="background: #2d3748; color: #fff; padding: 20px; border-radius: 8px; overflow-x: auto;"><code># Pull and run from Docker Hub
+docker pull funal/soketi-rs:latest
+docker run -d -p 6001:6001 -p 9601:9601 funal/soketi-rs:latest
+
+# Or use Docker Compose
+git clone https://github.com/ferdiunal/soketi.rs.git
+cd soketi.rs/deployment/docker
+docker-compose up -d</code></pre>
+            </div>
+            
+            <div style="margin-top: 40px; text-align: center;">
+                <h2 style="margin-bottom: 20px;">Documentation</h2>
+                <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                    <a href="en/getting-started.html" style="color: #667eea; text-decoration: none; font-weight: 600;">
+                        📖 English Documentation
+                    </a>
+                    <a href="tr/baslangic.html" style="color: #667eea; text-decoration: none; font-weight: 600;">
+                        📖 Türkçe Dokümantasyon
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>
+                Built with ❤️ by <a href="https://github.com/ferdiunal">Ferdi Ünal</a>
+            </p>
+            <p style="margin-top: 10px; opacity: 0.8;">
+                Licensed under MIT | 
+                <a href="https://github.com/ferdiunal/soketi.rs/blob/main/LICENSE">License</a> | 
+                <a href="https://github.com/ferdiunal/soketi.rs/issues">Issues</a> | 
+                <a href="https://github.com/ferdiunal/soketi.rs/discussions">Discussions</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

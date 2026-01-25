@@ -1,0 +1,64 @@
+{
+    # Global options
+    # auto_https is enabled by default for domains with valid certificates
+    # To disable: auto_https off
+    # To disable redirects: auto_https disable_redirects
+    # To disable automatic certificate management: auto_https disable_certs
+    servers {
+        protocols h1 h2 h3
+    }
+}
+
+# Development configuration (HTTP only)
+:80 {
+    # WebSocket proxy to soketi server
+    reverse_proxy /app/* {
+        to soketi:6001
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
+        
+        # WebSocket specific headers
+        header_up Connection {>Connection}
+        header_up Upgrade {>Upgrade}
+    }
+    
+    # Health check endpoint
+    respond /health 200
+}
+
+# Production configuration with HTTPS
+# Replace soketi.example.com with your actual domain
+soketi.example.com {
+    # WebSocket proxy to soketi server
+    reverse_proxy /app/* {
+        to soketi:6001
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
+        
+        # WebSocket specific headers
+        header_up Connection {>Connection}
+        header_up Upgrade {>Upgrade}
+    }
+    
+    # Security headers
+    header {
+        # HTTP Strict Transport Security (HSTS)
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        
+        # Prevent MIME type sniffing
+        X-Content-Type-Options "nosniff"
+        
+        # Prevent clickjacking
+        X-Frame-Options "DENY"
+        
+        # XSS Protection
+        X-XSS-Protection "1; mode=block"
+    }
+    
+    # Health check endpoint
+    respond /health 200
+}

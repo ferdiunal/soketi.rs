@@ -1,0 +1,160 @@
+{
+  "// NOTE": "This is the main configuration file for development.",
+  "// DEPLOYMENT": "For deployment, copy this to deployment/{docker|nginx|caddy}/config.json",
+  "// DOCS": "See docs/en/configuration.md for detailed configuration options",
+  
+  "host": "0.0.0.0",
+  "port": 6001,
+  "path_prefix": "",
+  "debug": true,
+  "mode": "Full",
+  "shutdown_grace_period_ms": 3000,
+  "user_authentication_timeout_ms": 30000,
+  "app_manager": {
+    "driver": "Array",
+    "array": {
+      "apps": [
+        {
+          "id": "app-id",
+          "key": "app-key",
+          "secret": "app-secret",
+          "enabled": true,
+          "enable_client_messages": true,
+          "max_connections": 10000,
+          "webhooks": []
+        }
+      ]
+    },
+    "dynamodb": {
+      "region": "us-east-1",
+      "endpoint": null,
+      "table": "soketi_apps"
+    },
+    "mysql": {
+      "host": "localhost",
+      "port": 3306,
+      "user": "root",
+      "password": "",
+      "database": "soketi",
+      "table": "apps",
+      "version": "8.0"
+    },
+    "postgres": {
+      "host": "localhost",
+      "port": 5432,
+      "user": "postgres",
+      "password": "",
+      "database": "soketi",
+      "table": "apps",
+      "version": "13.3"
+    },
+    "cache": {
+      "enabled": true,
+      "ttl_seconds": 3600
+    }
+  },
+  "adapter": {
+    "driver": "Local",
+    "redis": {
+      "host": "redis",
+      "port": 6379,
+      "db": 0,
+      "username": null,
+      "password": null,
+      "key_prefix": "soketi:"
+    },
+    "cluster": {
+      "port": 11002,
+      "multicast_address": "239.1.1.1",
+      "request_timeout_ms": 5000
+    },
+    "nats": {
+      "servers": ["127.0.0.1:4222"],
+      "user": null,
+      "password": null,
+      "token": null,
+      "timeout_ms": 10000,
+      "prefix": ""
+    }
+  },
+  "cache": {
+    "driver": "Memory",
+    "redis": {
+      "host": "redis",
+      "port": 6379,
+      "db": 1,
+      "username": null,
+      "password": null,
+      "key_prefix": "cache:"
+    }
+  },
+  "rate_limiter": {
+    "driver": "Local",
+    "redis": {
+      "host": "redis",
+      "port": 6379,
+      "db": 2,
+      "username": null,
+      "password": null,
+      "key_prefix": "ratelimit:"
+    }
+  },
+  "queue": {
+    "driver": "Sync",
+    "redis": {
+      "host": "redis",
+      "port": 6379,
+      "db": 0,
+      "username": null,
+      "password": null,
+      "concurrency": 1
+    },
+    "sqs": {
+      "region": "us-east-1",
+      "queue_url": "",
+      "endpoint": null,
+      "concurrency": 1,
+      "batch_size": 10
+    }
+  },
+  "metrics": {
+    "enabled": true,
+    "driver": "Prometheus",
+    "port": 9601,
+    "prefix": "soketi"
+  },
+  "ssl": {
+    "enabled": false,
+    "cert_path": "",
+    "key_path": ""
+  },
+  "cors": {
+    "enabled": true,
+    "origins": ["*"],
+    "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    "headers": ["*"],
+    "credentials": true
+  },
+  "channel_limits": {
+    "max_name_length": 200,
+    "cache_ttl_seconds": 3600
+  },
+  "event_limits": {
+    "max_channels_at_once": 100,
+    "max_name_length": 200,
+    "max_payload_in_kb": 100.0,
+    "max_batch_size": 10
+  },
+  "presence": {
+    "max_members_per_channel": 100,
+    "max_member_size_in_kb": 2.0
+  },
+  "http_api": {
+    "max_request_size_in_kb": 100.0,
+    "accept_traffic_memory_threshold_mb": 512
+  },
+  "webhooks": {
+    "batching_enabled": true,
+    "batch_duration_ms": 50
+  }
+}

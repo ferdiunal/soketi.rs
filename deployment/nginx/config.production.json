@@ -1,0 +1,85 @@
+{
+  "host": "0.0.0.0",
+  "port": 6001,
+  "debug": false,
+  "mode": "Full",
+  "shutdown_grace_period_ms": 3000,
+  "app_manager": {
+    "driver": "Postgres",
+    "postgres": {
+      "host": "postgres",
+      "port": 5432,
+      "user": "soketi",
+      "password": "your-secure-password",
+      "database": "soketi",
+      "table": "apps"
+    },
+    "cache": {
+      "enabled": true,
+      "ttl_seconds": 3600
+    }
+  },
+  "adapter": {
+    "driver": "Redis",
+    "redis": {
+      "host": "redis",
+      "port": 6379,
+      "db": 0,
+      "key_prefix": "soketi:"
+    }
+  },
+  "cache": {
+    "driver": "Redis",
+    "redis": {
+      "host": "redis",
+      "port": 6379,
+      "db": 1,
+      "key_prefix": "cache:"
+    }
+  },
+  "rate_limiter": {
+    "driver": "Redis",
+    "redis": {
+      "host": "redis",
+      "port": 6379,
+      "db": 2,
+      "key_prefix": "ratelimit:"
+    }
+  },
+  "queue": {
+    "driver": "Redis",
+    "redis": {
+      "host": "redis",
+      "port": 6379,
+      "db": 0,
+      "concurrency": 4
+    }
+  },
+  "metrics": {
+    "enabled": true,
+    "driver": "Prometheus",
+    "port": 9601,
+    "prefix": "soketi"
+  },
+  "ssl": {
+    "enabled": false
+  },
+  "cors": {
+    "enabled": true,
+    "origins": ["https://yourdomain.com"],
+    "credentials": true
+  },
+  "channel_limits": {
+    "max_name_length": 200
+  },
+  "event_limits": {
+    "max_channels_at_once": 100,
+    "max_name_length": 200,
+    "max_payload_in_kb": 100.0,
+    "max_batch_size": 10
+  },
+  "presence": {
+    "max_members_per_channel": 100,
+    "max_member_size_in_kb": 2.0
+  }
+}

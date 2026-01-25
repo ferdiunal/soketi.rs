@@ -1,0 +1,61 @@
+# Git
+.git/
+.gitignore
+.github/
+
+# IDE
+.vscode/
+.idea/
+.claude/
+.kiro/
+
+# Documentation (not needed in image)
+docs/
+*.md
+!README.md
+
+# Examples (not needed in image)
+examples/
+
+# Tests (not needed in image)
+tests/
+jest.config.js
+tsconfig.json
+
+# Demo applications
+demo-chat/
+next-chat-app/
+soketi-src/
+
+# Node.js
+node_modules/
+package.json
+package-lock.json
+
+# Build artifacts
+target/
+*.log
+
+# Environment files
+.env*
+!.env.example
+
+# Docker files (not needed in image)
+Dockerfile*
+docker-compose*.yml
+*.README.md
+
+# Monitoring
+monitoring/
+
+# Config examples
+*.example
+test-config.json
+
+# Reverse proxy configs (not needed in main image)
+Caddyfile
+nginx.conf
+default.conf
+
+# Task summaries
+TASK_*.md

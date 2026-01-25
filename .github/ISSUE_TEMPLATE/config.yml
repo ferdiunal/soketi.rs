@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/ferdiunal/soketi.rs/discussions
+    about: Ask questions and discuss with the community
+  - name: 📚 Documentation
+    url: https://github.com/ferdiunal/soketi.rs/tree/main/docs
+    about: Read the documentation
+  - name: 🐳 Docker Hub
+    url: https://hub.docker.com/r/funal/soketi-rs
+    about: Pre-built Docker images
