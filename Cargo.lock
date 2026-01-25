@@ -3042,7 +3042,7 @@ dependencies = [
 
 [[package]]
 name = "soketi-rs"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "async-nats",
  "async-trait",
