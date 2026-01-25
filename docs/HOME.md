@@ -98,4 +98,4 @@ Found an issue or want to improve the documentation? Contributions are welcome!
 
 ## License
 
-MIT License - see [LICENSE](../LICENSE) for details.
+This project is licensed under the GPL-3.0 License - see the [LICENSE](LICENSE) file for details.
