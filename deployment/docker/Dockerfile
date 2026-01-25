@@ -42,7 +42,7 @@ WORKDIR /app
 COPY --from=builder /app/target/release/soketi-rs /usr/local/bin/soketi-rs
 
 # Copy default config
-COPY deployment/docker/config.json /app/config.json
+COPY config.json /app/config.json
 
 # Change ownership
 RUN chown -R soketi:soketi /app

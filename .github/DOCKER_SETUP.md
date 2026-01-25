@@ -4,8 +4,8 @@ Bu dosya, Docker Hub'a otomatik image yayını için gerekli ayarları açıklar
 
 ## 1. Docker Hub Token Oluşturma
 
-1. [Docker Hub](https://hub.docker.com/) hesabına giriş yap
-2. Account Settings → Security → New Access Token
+1. [Docker Hub](https://app.docker.com/settings/personal-access-tokens) hesabına giriş yap
+2. "Generate New Token" butonuna tıkla
 3. Token açıklaması: `GitHub Actions - soketi-rs`
 4. Access permissions: `Read, Write, Delete`
 5. Token'ı kopyala (bir daha gösterilmeyecek!)
@@ -22,12 +22,10 @@ Bu dosya, Docker Hub'a otomatik image yayını için gerekli ayarları açıklar
 
 ## 3. Docker Hub Repository Oluşturma
 
-1. [Docker Hub](https://hub.docker.com/) → Repositories → Create Repository
-2. Repository bilgileri:
-   - **Name**: `soketi-rs`
-   - **Visibility**: Public
-   - **Description**: High-performance Pusher protocol compatible WebSocket server written in Rust
-3. "Create" butonuna tıkla
+Docker Hub repository'si zaten mevcut:
+- **Repository**: [funal/soketi-rs](https://hub.docker.com/r/funal/soketi-rs)
+- **Visibility**: Public
+- **Description**: High-performance Pusher protocol compatible WebSocket server written in Rust
 
 ## 4. Otomatik Yayın Tetikleme
 
@@ -38,9 +36,9 @@ git tag v1.0.0
 git push origin v1.0.0
 
 # Bu şu image'ları oluşturur:
-# - ferdiunal/soketi-rs:v1.0.0
-# - ferdiunal/soketi-rs:1.0
-# - ferdiunal/soketi-rs:1
+# - funal/soketi-rs:v1.0.0
+# - funal/soketi-rs:1.0
+# - funal/soketi-rs:1
 # - funal/soketi-rs:latest
 ```
 
@@ -50,7 +48,7 @@ git push origin v1.0.0
 git push origin main
 
 # Bu şu image'ı oluşturur:
-# - ferdiunal/soketi-rs:main
+# - funal/soketi-rs:main
 # - funal/soketi-rs:latest
 ```
 
@@ -98,14 +96,17 @@ docker rm soketi-test
 
 ## Troubleshooting
 
+### "ERROR: failed to read dockerfile: open Dockerfile: no such file or directory"
+✅ **Çözüldü**: Dockerfile path'i `deployment/docker/Dockerfile` olarak güncellendi.
+
 ### "Error: buildx failed with: ERROR: failed to solve: failed to push"
 - Docker Hub token'ın doğru olduğundan emin ol
 - Token'ın Write yetkisi olduğunu kontrol et
-- GitHub secret'ın doğru eklendiğini kontrol et
+- GitHub secret'ın doğru eklendiğini kontrol et (`DOCKER_HUB_TOKEN`)
 
 ### "Error: denied: requested access to the resource is denied"
-- Docker Hub repository'nin public olduğundan emin ol
-- Repository adının doğru olduğunu kontrol et: `ferdiunal/soketi-rs`
+- Docker Hub kullanıcı adının doğru olduğunu kontrol et: `funal`
+- Token'ın doğru hesaba ait olduğundan emin ol
 
 ### Build başarılı ama image yok
 - Workflow'un push adımının çalıştığını kontrol et
@@ -118,23 +119,26 @@ docker rm soketi-test
 - ✅ README otomatik güncelleniyor
 - ✅ Semantic versioning destekleniyor
 - ✅ Latest tag otomatik güncelleniyor
+- ✅ GPL-3.0 lisansı metadata'da
 
 ## Kullanıcı Adı Değişikliği
 
 Eğer Docker Hub kullanıcı adını değiştirmek istersen:
 
 1. `.github/workflows/docker-publish.yml` dosyasını aç
-2. `DOCKER_USERNAME: ferdiunal` satırını değiştir
+2. `DOCKER_USERNAME: funal` satırını değiştir (şu an `ferdiunal` olarak ayarlı)
 3. Commit ve push yap
+
+**Not**: Şu an workflow'da `DOCKER_USERNAME: ferdiunal` var ama Docker Hub hesabın `funal`. Bunu düzeltmek ister misin?
 
 ## Sonraki Adımlar
 
 1. ✅ Docker Hub token oluştur
-2. ✅ GitHub secret ekle
-3. ✅ Docker Hub repository oluştur
-4. ✅ İlk tag'i oluştur ve push et
-5. ✅ GitHub Actions'da build'i izle
-6. ✅ Docker Hub'da image'ı kontrol et
-7. ✅ Image'ı test et
+2. ✅ GitHub secret ekle (`DOCKER_HUB_TOKEN`)
+3. ✅ Docker Hub repository mevcut
+4. ⏳ Değişiklikleri commit ve push et
+5. ⏳ GitHub Actions'da build'i izle
+6. ⏳ Docker Hub'da image'ı kontrol et
+7. ⏳ Image'ı test et
 
 Başarılar! 🚀
