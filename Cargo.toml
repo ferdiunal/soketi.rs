@@ -2,6 +2,25 @@
 name = "soketi-rs"
 version = "0.1.0"
 edition = "2024"
+authors = ["Ferdi ÜNAL <ferdi@ferdiunal.com>"]
+readme = "README.md"
+homepage = "https://github.com/ferdiunal/soketi.rs"
+repository = "https://github.com/ferdiunal/soketi.rs"
+license = "GPL-3.0"
+exclude = [
+    ".github/*",
+    "deployment/*",
+    "docs/*",
+    "tests/*",
+    "examples/*",
+    "art/*",
+    ".gitignore",
+    ".dockerignore"
+]
+description = "High-performance, Pusher-compatible WebSocket server written in Rust with support for public, private, and presence channels"
+documentation = "https://github.com/ferdiunal/soketi-rs/tree/main/docs"
+keywords = ["websocket", "pusher", "realtime", "server", "soketi"]
+categories = ["network-programming", "web-programming", "asynchronous"]
 
 [dependencies]
 async-nats = "0.46.0"

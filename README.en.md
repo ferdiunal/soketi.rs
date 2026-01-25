@@ -3,11 +3,14 @@
 ![Soketi.rs Cover](art/cover_en.png)
 
 [![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)](https://www.rust-lang.org/)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/ferdiunal/soketi-rs/docker-publish.yml?branch=main)](https://github.com/ferdiunal/soketi-rs/actions)
+[![Crates.io](https://img.shields.io/crates/v/soketi-rs.svg)](https://crates.io/crates/soketi-rs)
+[![Documentation](https://docs.rs/soketi-rs/badge.svg)](https://docs.rs/soketi-rs)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/ferdiunal/soketi-rs/release.yml?branch=main)](https://github.com/ferdiunal/soketi-rs/actions)
 [![Version](https://img.shields.io/github/v/release/ferdiunal/soketi-rs)](https://github.com/ferdiunal/soketi-rs/releases)
 [![License](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
-[![Docker](https://img.shields.io/docker/pulls/ferdiunal/soketi-rs)](https://hub.docker.com/r/funal/soketi-rs)
-[![Docker Image Size](https://img.shields.io/docker/image-size/ferdiunal/soketi-rs/latest)](https://hub.docker.com/r/funal/soketi-rs)
+[![Docker](https://img.shields.io/docker/pulls/funal/soketi-rs)](https://hub.docker.com/r/funal/soketi-rs)
+[![Docker Image Size](https://img.shields.io/docker/image-size/funal/soketi-rs/latest)](https://hub.docker.com/r/funal/soketi-rs)
+[![Downloads](https://img.shields.io/crates/d/soketi-rs.svg)](https://crates.io/crates/soketi-rs)
 
 A high-performance, Pusher-compatible WebSocket server written in Rust. Soketi.rs provides real-time messaging capabilities with support for public, private, and presence channels.
 

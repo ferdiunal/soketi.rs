@@ -3,11 +3,14 @@
 ![Soketi.rs Cover](art/cover.png)
 
 [![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)](https://www.rust-lang.org/)
-[![Build Durumu](https://img.shields.io/github/actions/workflow/status/ferdiunal/soketi-rs/docker-publish.yml?branch=main)](https://github.com/ferdiunal/soketi-rs/actions)
+[![Crates.io](https://img.shields.io/crates/v/soketi-rs.svg)](https://crates.io/crates/soketi-rs)
+[![Documentation](https://docs.rs/soketi-rs/badge.svg)](https://docs.rs/soketi-rs)
+[![Build Durumu](https://img.shields.io/github/actions/workflow/status/ferdiunal/soketi-rs/release.yml?branch=main)](https://github.com/ferdiunal/soketi-rs/actions)
 [![Versiyon](https://img.shields.io/github/v/release/ferdiunal/soketi-rs)](https://github.com/ferdiunal/soketi-rs/releases)
 [![Lisans](https://img.shields.io/badge/lisans-GPL--3.0-blue.svg)](LICENSE)
-[![Docker](https://img.shields.io/docker/pulls/ferdiunal/soketi-rs)](https://hub.docker.com/r/funal/soketi-rs)
-[![Docker İmaj Boyutu](https://img.shields.io/docker/image-size/ferdiunal/soketi-rs/latest)](https://hub.docker.com/r/funal/soketi-rs)
+[![Docker](https://img.shields.io/docker/pulls/funal/soketi-rs)](https://hub.docker.com/r/funal/soketi-rs)
+[![Docker İmaj Boyutu](https://img.shields.io/docker/image-size/funal/soketi-rs/latest)](https://hub.docker.com/r/funal/soketi-rs)
+[![İndirmeler](https://img.shields.io/crates/d/soketi-rs.svg)](https://crates.io/crates/soketi-rs)
 
 Rust ile yazılmış, yüksek performanslı, Pusher uyumlu WebSocket sunucusu. Soketi.rs, public, private ve presence kanalları desteğiyle gerçek zamanlı mesajlaşma yetenekleri sağlar.
 
