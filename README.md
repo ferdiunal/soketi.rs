@@ -5,7 +5,7 @@
 [![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)](https://www.rust-lang.org/)
 [![Build Durumu](https://img.shields.io/github/actions/workflow/status/ferdiunal/soketi-rs/docker-publish.yml?branch=main)](https://github.com/ferdiunal/soketi-rs/actions)
 [![Versiyon](https://img.shields.io/github/v/release/ferdiunal/soketi-rs)](https://github.com/ferdiunal/soketi-rs/releases)
-[![Lisans](https://img.shields.io/badge/lisans-MIT-blue.svg)](LICENSE)
+[![Lisans](https://img.shields.io/badge/lisans-GPL--3.0-blue.svg)](LICENSE)
 [![Docker](https://img.shields.io/docker/pulls/ferdiunal/soketi-rs)](https://hub.docker.com/r/funal/soketi-rs)
 [![Docker İmaj Boyutu](https://img.shields.io/docker/image-size/ferdiunal/soketi-rs/latest)](https://hub.docker.com/r/funal/soketi-rs)
 
@@ -604,7 +604,7 @@ cargo run -- --config-file test-config.json
 
 ## 📄 Lisans
 
-Bu proje MIT Lisansı altında lisanslanmıştır - detaylar için [LICENSE](LICENSE) dosyasına bakın.
+Bu proje GPL-3.0 Lisansı altında lisanslanmıştır - detaylar için [LICENSE](LICENSE) dosyasına bakın.
 
 ## 🙏 Teşekkürler
 
