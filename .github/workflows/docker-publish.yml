@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  DOCKER_USERNAME: ferdiunal
+  DOCKER_USERNAME: funal
   IMAGE_NAME: soketi-rs
 
 jobs:
