@@ -19,7 +19,7 @@ Bu örnek, soketi.rs'yi WebSocket sunucusu ve Pusher JavaScript SDK'yı istemci 
 ## Ön Koşullar
 
 - Node.js 18+ kurulu
-- soketi.rs sunucusu çalışıyor ([Başlangıç Kılavuzu](../baslangic.md)'na bakın)
+- soketi.rs sunucusu çalışıyor ([Başlangıç Kılavuzu](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/baslangic.md)'na bakın)
 - JavaScript/TypeScript temel bilgisi
 - Bir metin editörü veya IDE
 
@@ -434,9 +434,9 @@ Kullanici123: Nasılsınız? 10:30:30
 
 ## Sonraki Adımlar
 
-- **Özel Kanallar Ekleyin**: [Özel Kanallar Örneği](./ozel-kanallar.md)'nde kimlik doğrulama ile özel kanalların nasıl uygulanacağını öğrenin
-- **Presence Ekleyin**: [Presence Kanalları Örneği](./presence.md) ile kimlerin çevrimiçi olduğunu görün
-- **Kimlik Doğrulama Ekleyin**: [Kimlik Doğrulama Örneği](./kimlik-dogrulama.md) ile chat'inizi güvenli hale getirin
+- **Özel Kanallar Ekleyin**: [Özel Kanallar Örneği](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/ornekler/ozel-kanallar.md)'nde kimlik doğrulama ile özel kanalların nasıl uygulanacağını öğrenin
+- **Presence Ekleyin**: [Presence Kanalları Örneği](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/ornekler/presence.md) ile kimlerin çevrimiçi olduğunu görün
+- **Kimlik Doğrulama Ekleyin**: [Kimlik Doğrulama Örneği](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/ornekler/kimlik-dogrulama.md) ile chat'inizi güvenli hale getirin
 - **Sunucu Tarafı Olaylar**: Backend'inizden olayları nasıl tetikleyeceğinizi öğrenin
 - **Mesaj Geçmişi**: Bir veritabanı ile mesaj kalıcılığını uygulayın
 - **Kullanıcı Profilleri**: Avatar ve kullanıcı profilleri ekleyin
@@ -445,7 +445,7 @@ Kullanici123: Nasılsınız? 10:30:30
 
 ## İlgili Dokümantasyon
 
-- [Başlangıç Kılavuzu](../baslangic.md)
-- [API Referansı](../api-referans.md)
-- [Yapılandırma Kılavuzu](../yapilandirma.md)
-- [Sorun Giderme](../sorun-giderme.md)
+- [Başlangıç Kılavuzu](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/baslangic.md)
+- [API Referansı](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/api-referans.md)
+- [Yapılandırma Kılavuzu](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/yapilandirma.md)
+- [Sorun Giderme](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/sorun-giderme.md)

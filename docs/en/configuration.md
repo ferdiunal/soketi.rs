@@ -58,22 +58,153 @@ soketi --config /path/to/config.json
 
 ## Environment Variables
 
-You can override configuration using environment variables:
+All configuration options can be overridden using environment variables with the `PUSHER_` prefix.
+
+### Server Configuration
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `SOKETI_HOST` | Server host | `0.0.0.0` |
-| `SOKETI_PORT` | Server port | `6001` |
-| `SOKETI_DEFAULT_APP_ID` | Default app ID | - |
-| `SOKETI_DEFAULT_APP_KEY` | Default app key | - |
-| `SOKETI_DEFAULT_APP_SECRET` | Default app secret | - |
-| `SOKETI_METRICS_ENABLED` | Enable metrics | `true` |
-| `SOKETI_METRICS_PORT` | Metrics port | `9601` |
+| `PUSHER_HOST` | Server host | `0.0.0.0` |
+| `PUSHER_PORT` | Server port | `6001` |
+| `PUSHER_DEBUG` | Enable debug mode | `false` |
+| `PUSHER_MODE` | Server mode (full, server, worker) | `full` |
 
-Example:
+### App Manager Configuration
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PUSHER_APP_MANAGER_DRIVER` | App manager driver (array, dynamodb, mysql, postgres) | `array` |
+| `PUSHER_APP_MANAGER_ARRAY_APPS` | JSON array of apps (for array driver) | `[]` |
+| `PUSHER_DEFAULT_APP_ID` | Default app ID (creates a single app) | - |
+| `PUSHER_DEFAULT_APP_KEY` | Default app key (creates a single app) | - |
+| `PUSHER_DEFAULT_APP_SECRET` | Default app secret (creates a single app) | - |
+| `PUSHER_APP_MANAGER_CACHE_ENABLED` | Enable app manager cache | `false` |
+| `PUSHER_APP_MANAGER_CACHE_TTL` | Cache TTL in seconds | `3600` |
+
+### Adapter Configuration
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PUSHER_ADAPTER_DRIVER` | Adapter driver (local, cluster, redis, nats) | `local` |
+| `PUSHER_ADAPTER_REDIS_HOST` | Redis adapter host | `127.0.0.1` |
+| `PUSHER_ADAPTER_REDIS_PORT` | Redis adapter port | `6379` |
+| `PUSHER_ADAPTER_REDIS_DB` | Redis adapter database | `0` |
+| `PUSHER_ADAPTER_REDIS_PASSWORD` | Redis adapter password | - |
+| `PUSHER_ADAPTER_CLUSTER_PORT` | Cluster adapter port | `11002` |
+| `PUSHER_ADAPTER_NATS_SERVERS` | NATS servers (comma-separated) | `127.0.0.1:4222` |
+
+### Cache Configuration
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PUSHER_CACHE_DRIVER` | Cache driver (memory, redis) | `memory` |
+| `PUSHER_CACHE_REDIS_HOST` | Redis cache host | `127.0.0.1` |
+| `PUSHER_CACHE_REDIS_PORT` | Redis cache port | `6379` |
+| `PUSHER_CACHE_REDIS_PASSWORD` | Redis cache password | - |
+
+### Metrics Configuration
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PUSHER_METRICS_ENABLED` | Enable metrics | `false` |
+| `PUSHER_METRICS_PORT` | Metrics port | `9601` |
+| `PUSHER_METRICS_PREFIX` | Metrics prefix | `pusher` |
+
+### Database Configuration (MySQL)
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PUSHER_MYSQL_HOST` | MySQL host | `127.0.0.1` |
+| `PUSHER_MYSQL_PORT` | MySQL port | `3306` |
+| `PUSHER_MYSQL_USER` | MySQL user | `root` |
+| `PUSHER_MYSQL_PASSWORD` | MySQL password | - |
+| `PUSHER_MYSQL_DATABASE` | MySQL database | `main` |
+
+### Database Configuration (PostgreSQL)
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PUSHER_POSTGRES_HOST` | PostgreSQL host | `127.0.0.1` |
+| `PUSHER_POSTGRES_PORT` | PostgreSQL port | `5432` |
+| `PUSHER_POSTGRES_USER` | PostgreSQL user | `postgres` |
+| `PUSHER_POSTGRES_PASSWORD` | PostgreSQL password | - |
+| `PUSHER_POSTGRES_DATABASE` | PostgreSQL database | `main` |
+
+### Database Configuration (DynamoDB)
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PUSHER_DYNAMODB_TABLE` | DynamoDB table name | `apps` |
+| `PUSHER_DYNAMODB_REGION` | AWS region | `us-east-1` |
+
+### Queue Configuration
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PUSHER_QUEUE_DRIVER` | Queue driver (sync, redis, sqs) | `sync` |
+| `PUSHER_QUEUE_REDIS_HOST` | Redis queue host | `127.0.0.1` |
+| `PUSHER_QUEUE_REDIS_PORT` | Redis queue port | `6379` |
+| `PUSHER_QUEUE_SQS_URL` | SQS queue URL | - |
+| `PUSHER_QUEUE_SQS_REGION` | SQS region | `us-east-1` |
+
+### SSL Configuration
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PUSHER_SSL_ENABLED` | Enable SSL | `false` |
+| `PUSHER_SSL_CERT_PATH` | SSL certificate path | - |
+| `PUSHER_SSL_KEY_PATH` | SSL key path | - |
+
+### CORS Configuration
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PUSHER_CORS_ENABLED` | Enable CORS | `true` |
+| `PUSHER_CORS_ORIGINS` | Allowed origins (comma-separated) | `*` |
+
+### Examples
+
+#### Using Default App (Simple Setup)
 
 ```bash
-SOKETI_PORT=8080 soketi --config config.json
+PUSHER_DEFAULT_APP_ID=my-app \
+PUSHER_DEFAULT_APP_KEY=my-key \
+PUSHER_DEFAULT_APP_SECRET=my-secret \
+soketi-rs
+```
+
+#### Using JSON Array of Apps
+
+```bash
+PUSHER_APP_MANAGER_ARRAY_APPS='[{"id":"app1","key":"key1","secret":"secret1","enabled":true}]' \
+soketi-rs
+```
+
+#### With Redis Adapter
+
+```bash
+PUSHER_ADAPTER_DRIVER=redis \
+PUSHER_ADAPTER_REDIS_HOST=localhost \
+PUSHER_ADAPTER_REDIS_PORT=6379 \
+PUSHER_ADAPTER_REDIS_PASSWORD=mypassword \
+soketi-rs
+```
+
+#### Docker Compose Example
+
+```yaml
+environment:
+  PUSHER_DEFAULT_APP_ID: "shopilens"
+  PUSHER_DEFAULT_APP_KEY: "shopilens-key"
+  PUSHER_DEFAULT_APP_SECRET: "shopilens-secret"
+  PUSHER_ADAPTER_DRIVER: "redis"
+  PUSHER_ADAPTER_REDIS_HOST: "redis"
+  PUSHER_ADAPTER_REDIS_PORT: "6379"
+  PUSHER_ADAPTER_REDIS_PASSWORD: "mypassword"
+  PUSHER_CACHE_DRIVER: "redis"
+  PUSHER_CACHE_REDIS_HOST: "redis"
+  PUSHER_METRICS_ENABLED: "true"
+  PUSHER_METRICS_PORT: "9601"
 ```
 
 ## App Manager Configuration
@@ -369,14 +500,14 @@ Enable SSL/TLS for secure connections:
 
 ## Next Steps
 
-- **[Getting Started](getting-started.md)** - Quick start guide
-- **[API Reference](api-reference.md)** - API documentation
-- **[Deployment Guide](deployment/reverse-proxy.md)** - Production deployment
+- **[Getting Started](getting-started)** - Quick start guide
+- **[API Reference](api-reference)** - API documentation
+- **[Deployment Guide](deployment/reverse-proxy)** - Production deployment
 
 ## Related Resources
 
-- [MySQL Setup Guide](../MYSQL_SETUP.md)
-- [PostgreSQL Setup Guide](../POSTGRES_SETUP.md)
-- [DynamoDB Setup Guide](../DYNAMODB_SETUP.md)
-- [Redis Adapter Implementation](../REDIS_ADAPTER_IMPLEMENTATION.md)
-- [NATS Adapter Implementation](../NATS_ADAPTER_IMPLEMENTATION.md)
+- [MySQL Setup Guide](../MYSQL_SETUP)
+- [PostgreSQL Setup Guide](../POSTGRES_SETUP)
+- [DynamoDB Setup Guide](../DYNAMODB_SETUP)
+- [Redis Adapter Implementation](../REDIS_ADAPTER_IMPLEMENTATION)
+- [NATS Adapter Implementation](../NATS_ADAPTER_IMPLEMENTATION)

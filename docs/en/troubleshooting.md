@@ -1475,13 +1475,13 @@ docker restart soketi
 
 ## Related Resources
 
-- [Getting Started Guide](getting-started.md)
-- [Configuration Reference](configuration.md)
-- [API Reference](api-reference.md)
-- [Deployment Guide](deployment/reverse-proxy.md)
-- [Vercel Deployment](deployment/vercel.md)
-- [Netlify Deployment](deployment/netlify.md)
-- [Examples](examples/basic-chat.md)
+- [Getting Started Guide](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/getting-started.md)
+- [Configuration Reference](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/configuration.md)
+- [API Reference](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/api-reference.md)
+- [Deployment Guide](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/deployment/reverse-proxy.md)
+- [Vercel Deployment](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/deployment/vercel.md)
+- [Netlify Deployment](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/deployment/netlify.md)
+- [Examples](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/examples/basic-chat.md)
 
 ---
 

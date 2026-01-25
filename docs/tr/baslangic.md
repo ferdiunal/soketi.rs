@@ -445,14 +445,14 @@ function getCurrentUserName(): string { return 'Ahmet Yılmaz'; }
 
 Artık Soketi çalışıyor, şu konuları keşfedin:
 
-- **[Kurulum Kılavuzu](kurulum.md)** - Detaylı kurulum seçenekleri
-- **[Yapılandırma Referansı](yapilandirma.md)** - Tüm yapılandırma seçenekleri
-- **[API Referansı](api-referans.md)** - WebSocket ve HTTP API dokümantasyonu
-- **[Deployment Kılavuzu](deployment/reverse-proxy.md)** - Reverse proxy ile production deployment
-- **[Örnekler](ornekler/temel-chat.md)** - Kod örnekleri ve eğitimler
+- **[Kurulum Kılavuzu](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/kurulum.md)** - Detaylı kurulum seçenekleri
+- **[Yapılandırma Referansı](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/yapilandirma.md)** - Tüm yapılandırma seçenekleri
+- **[API Referansı](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/api-referans.md)** - WebSocket ve HTTP API dokümantasyonu
+- **[Deployment Kılavuzu](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/deployment/reverse-proxy.md)** - Reverse proxy ile production deployment
+- **[Örnekler](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/ornekler/temel-chat.md)** - Kod örnekleri ve eğitimler
 
 ## İlgili Kaynaklar
 
 - [Resmi Pusher Dokümantasyonu](https://pusher.com/docs)
 - [Soketi GitHub Deposu](https://github.com/soketi/soketi.rs)
-- [Sorun Giderme Kılavuzu](sorun-giderme.md)
+- [Sorun Giderme Kılavuzu](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/sorun-giderme.md)

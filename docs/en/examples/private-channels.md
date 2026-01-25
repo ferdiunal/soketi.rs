@@ -28,10 +28,10 @@ Private channels are prefixed with `private-` and require an authentication endp
 ## Prerequisites
 
 - Node.js 18+ installed
-- soketi.rs server running (see [Getting Started](../getting-started.md))
+- soketi.rs server running (see [Getting Started](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/getting-started.md))
 - Express.js or similar backend framework
 - Basic knowledge of JavaScript/TypeScript
-- Understanding of [Basic Chat Example](./basic-chat.md)
+- Understanding of [Basic Chat Example](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/examples/basic-chat.md)
 
 ## Setup Instructions
 
@@ -1055,8 +1055,8 @@ function validateChannelName(channelName: string): boolean {
 
 ## Related Documentation
 
-- [Basic Chat Example](./basic-chat.md)
-- [Presence Channels Example](./presence.md)
-- [Authentication Example](./authentication.md)
-- [API Reference](../api-reference.md)
+- [Basic Chat Example](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/examples/basic-chat.md)
+- [Presence Channels Example](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/examples/presence.md)
+- [Authentication Example](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/examples/authentication.md)
+- [API Reference](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/api-reference.md)
 - [Security Best Practices](../getting-started.md#security)

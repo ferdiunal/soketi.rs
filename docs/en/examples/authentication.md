@@ -28,7 +28,7 @@ This guide covers various authentication patterns for securing your soketi.rs ap
 - Node.js 18+ installed
 - soketi.rs server running
 - Express.js or similar backend framework
-- Understanding of [Private Channels](./private-channels.md)
+- Understanding of [Private Channels](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/examples/private-channels.md)
 - Basic knowledge of authentication concepts
 
 ## Authentication Patterns
@@ -1145,9 +1145,9 @@ User logged out: alice@example.com
 
 ## Related Documentation
 
-- [Basic Chat Example](./basic-chat.md)
-- [Private Channels Example](./private-channels.md)
-- [Presence Channels Example](./presence.md)
-- [API Reference](../api-reference.md)
+- [Basic Chat Example](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/examples/basic-chat.md)
+- [Private Channels Example](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/examples/private-channels.md)
+- [Presence Channels Example](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/examples/presence.md)
+- [API Reference](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/api-reference.md)
 - [Security Best Practices](../getting-started.md#security)
-- [Configuration Guide](../configuration.md)
+- [Configuration Guide](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/configuration.md)

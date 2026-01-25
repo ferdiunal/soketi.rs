@@ -27,10 +27,10 @@ Unlike public channels, presence channels require authentication and provide mem
 ## Prerequisites
 
 - Node.js 18+ installed
-- soketi.rs server running (see [Getting Started](../getting-started.md))
+- soketi.rs server running (see [Getting Started](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/getting-started.md))
 - Express.js or similar backend framework for authentication
 - Basic knowledge of JavaScript/TypeScript
-- Understanding of [Basic Chat Example](./basic-chat.md)
+- Understanding of [Basic Chat Example](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/examples/basic-chat.md)
 
 ## Setup Instructions
 
@@ -839,8 +839,8 @@ function sendDirectMessage(recipientId: string, message: string) {
 
 ## Related Documentation
 
-- [Basic Chat Example](./basic-chat.md)
-- [Private Channels Example](./private-channels.md)
-- [Authentication Example](./authentication.md)
-- [API Reference](../api-reference.md)
-- [Getting Started Guide](../getting-started.md)
+- [Basic Chat Example](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/examples/basic-chat.md)
+- [Private Channels Example](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/examples/private-channels.md)
+- [Authentication Example](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/examples/authentication.md)
+- [API Reference](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/api-reference.md)
+- [Getting Started Guide](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/getting-started.md)

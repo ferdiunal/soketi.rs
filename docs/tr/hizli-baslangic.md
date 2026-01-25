@@ -5,7 +5,7 @@
 ### 1. Klonlayın & Başlatın
 
 ```bash
-git clone https://github.com/ferdiunal/soketi-rs.git
+git clone https://github.com/ferdiunal/soketi.rs.git
 cd soketi-rs
 docker-compose up -d
 ```
@@ -37,11 +37,11 @@ channel.bind('my-event', (data) => {
 
 ## 📚 Sonraki Adımlar
 
-- [Başlangıç](baslangic.md)
-- [Kurulum](kurulum.md)
-- [Yapılandırma](yapilandirma.md)
-- [API Referansı](api-referans.md)
-- [Deployment Rehberi](docker-deployment.md)
+- [Başlangıç](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/baslangic.md)
+- [Kurulum](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/kurulum.md)
+- [Yapılandırma](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/yapilandirma.md)
+- [API Referansı](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/api-referans.md)
+- [Deployment Rehberi](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/docker-deployment.md)
 
 ## 🎯 Yaygın Kullanım Senaryoları
 
@@ -90,5 +90,5 @@ presence.bind('pusher:member_added', (member) => {
 
 ## 📞 Yardıma mı İhtiyacınız Var?
 
-- [GitHub Issues](https://github.com/ferdiunal/soketi-rs/issues)
-- [Sorun Giderme](sorun-giderme.md)
+- [GitHub Issues](https://github.com/ferdiunal/soketi.rs/issues)
+- [Sorun Giderme](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/sorun-giderme.md)

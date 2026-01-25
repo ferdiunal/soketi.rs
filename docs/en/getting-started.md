@@ -447,14 +447,14 @@ function getCurrentUserName(): string { return 'John Doe'; }
 
 Now that you have Soketi running, explore these topics:
 
-- **[Installation Guide](installation.md)** - Detailed installation options
-- **[Configuration Reference](configuration.md)** - Complete configuration options
-- **[API Reference](api-reference.md)** - WebSocket and HTTP API documentation
-- **[Deployment Guide](deployment/reverse-proxy.md)** - Production deployment with reverse proxies
-- **[Examples](examples/basic-chat.md)** - Code examples and tutorials
+- **[Installation Guide](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/installation.md)** - Detailed installation options
+- **[Configuration Reference](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/configuration.md)** - Complete configuration options
+- **[API Reference](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/api-reference.md)** - WebSocket and HTTP API documentation
+- **[Deployment Guide](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/deployment/reverse-proxy.md)** - Production deployment with reverse proxies
+- **[Examples](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/examples/basic-chat.md)** - Code examples and tutorials
 
 ## Related Resources
 
 - [Official Pusher Documentation](https://pusher.com/docs)
 - [Soketi GitHub Repository](https://github.com/soketi/soketi.rs)
-- [Troubleshooting Guide](troubleshooting.md)
+- [Troubleshooting Guide](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/troubleshooting.md)

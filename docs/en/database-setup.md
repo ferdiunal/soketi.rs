@@ -410,4 +410,4 @@ Monitor CloudWatch metrics:
 
 ---
 
-For more information, see [Configuration](configuration.md) and [Deployment](deployment.md).
+For more information, see [Configuration](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/configuration.md) and [Deployment](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/deployment.md).

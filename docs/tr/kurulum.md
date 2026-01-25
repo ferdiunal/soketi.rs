@@ -247,12 +247,12 @@ Beklenen yanıt:
 
 ## Sonraki Adımlar
 
-- **[Yapılandırma Kılavuzu](yapilandirma.md)** - Soketi'yi ihtiyaçlarınıza göre yapılandırın
-- **[Başlangıç](baslangic.md)** - Hızlı başlangıç kılavuzu
-- **[Deployment Kılavuzu](deployment/reverse-proxy.md)** - Production'a deploy etme
+- **[Yapılandırma Kılavuzu](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/yapilandirma.md)** - Soketi'yi ihtiyaçlarınıza göre yapılandırın
+- **[Başlangıç](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/baslangic.md)** - Hızlı başlangıç kılavuzu
+- **[Deployment Kılavuzu](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/deployment/reverse-proxy.md)** - Production'a deploy etme
 
 ## İlgili Kaynaklar
 
 - [GitHub Deposu](https://github.com/soketi/soketi.rs)
 - [Docker Hub](https://quay.io/repository/soketi/soketi)
-- [Sorun Giderme Kılavuzu](sorun-giderme.md)
+- [Sorun Giderme Kılavuzu](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/sorun-giderme.md)

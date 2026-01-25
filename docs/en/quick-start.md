@@ -5,7 +5,7 @@
 ### 1. Clone & Start
 
 ```bash
-git clone https://github.com/ferdiunal/soketi-rs.git
+git clone https://github.com/ferdiunal/soketi.rs.git
 cd soketi-rs
 docker-compose up -d
 ```
@@ -37,11 +37,11 @@ channel.bind('my-event', (data) => {
 
 ## 📚 Next Steps
 
-- [Getting Started](getting-started.md)
-- [Installation](installation.md)
-- [Configuration](configuration.md)
-- [API Reference](api-reference.md)
-- [Deployment Guide](deployment.md)
+- [Getting Started](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/getting-started.md)
+- [Installation](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/installation.md)
+- [Configuration](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/configuration.md)
+- [API Reference](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/api-reference.md)
+- [Deployment Guide](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/deployment.md)
 
 ## 🎯 Common Use Cases
 
@@ -90,5 +90,5 @@ Edit `config.json`:
 
 ## 📞 Need Help?
 
-- [GitHub Issues](https://github.com/ferdiunal/soketi-rs/issues)
-- [Troubleshooting](troubleshooting.md)
+- [GitHub Issues](https://github.com/ferdiunal/soketi.rs/issues)
+- [Troubleshooting](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/troubleshooting.md)

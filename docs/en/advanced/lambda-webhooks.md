@@ -406,6 +406,6 @@ For async invocations, errors are not returned to the caller. For sync invocatio
 
 ## See Also
 
-- [Webhook Sender Documentation](./WEBHOOK_SENDER.md)
+- [Webhook Sender Documentation](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/advanced/WEBHOOK_SENDER.md)
 - [AWS Lambda Documentation](https://docs.aws.amazon.com/lambda/)
 - [AWS SDK for Rust](https://github.com/awslabs/aws-sdk-rust)

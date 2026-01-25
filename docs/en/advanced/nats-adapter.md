@@ -292,5 +292,3 @@ Potential improvements for the NatsAdapter:
 - [NATS Documentation](https://docs.nats.io/)
 - [async-nats Crate](https://docs.rs/async-nats/)
 - [Pusher Protocol Specification](https://pusher.com/docs/channels/library_auth_reference/pusher-websockets-protocol/)
-- [Requirements Document](.kiro/specs/pusher-server-rust-implementation/requirements.md)
-- [Design Document](.kiro/specs/pusher-server-rust-implementation/design.md)

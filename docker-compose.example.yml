@@ -1,0 +1,111 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: soketi-redis
+    command: redis-server --requirepass ${REDIS_PASSWORD:-soketi} --appendonly yes
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - soketi
+
+  soketi:
+    image: funal/soketi-rs:latest
+    container_name: soketi-server
+    depends_on:
+      - redis
+    ports:
+      - "${SOKETI_PORT:-6001}:6001"
+      - "${SOKETI_METRICS_PORT:-9601}:9601"
+    environment:
+      # Server Configuration
+      PUSHER_DEBUG: "true"
+      PUSHER_HOST: "0.0.0.0"
+      PUSHER_PORT: "6001"
+      
+      # App Configuration (Option 1: Default App)
+      PUSHER_DEFAULT_APP_ID: "${APP_ID:-app-id}"
+      PUSHER_DEFAULT_APP_KEY: "${APP_KEY:-app-key}"
+      PUSHER_DEFAULT_APP_SECRET: "${APP_SECRET:-app-secret}"
+      
+      # App Configuration (Option 2: JSON Array - uncomment to use)
+      # PUSHER_APP_MANAGER_ARRAY_APPS: '[{"id":"app1","key":"key1","secret":"secret1","enabled":true},{"id":"app2","key":"key2","secret":"secret2","enabled":true}]'
+      
+      # Adapter Configuration (Redis for horizontal scaling)
+      PUSHER_ADAPTER_DRIVER: "redis"
+      PUSHER_ADAPTER_REDIS_HOST: "redis"
+      PUSHER_ADAPTER_REDIS_PORT: "6379"
+      PUSHER_ADAPTER_REDIS_PASSWORD: "${REDIS_PASSWORD:-soketi}"
+      PUSHER_ADAPTER_REDIS_DB: "0"
+      
+      # Cache Configuration (Redis)
+      PUSHER_CACHE_DRIVER: "redis"
+      PUSHER_CACHE_REDIS_HOST: "redis"
+      PUSHER_CACHE_REDIS_PORT: "6379"
+      PUSHER_CACHE_REDIS_PASSWORD: "${REDIS_PASSWORD:-soketi}"
+      
+      # Metrics Configuration
+      PUSHER_METRICS_ENABLED: "true"
+      PUSHER_METRICS_PORT: "9601"
+      PUSHER_METRICS_PREFIX: "soketi"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6001/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - soketi
+    restart: unless-stopped
+
+  # Optional: Prometheus for metrics collection
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: soketi-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - soketi
+    profiles:
+      - monitoring
+
+  # Optional: Grafana for metrics visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: soketi-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - soketi
+    profiles:
+      - monitoring
+
+volumes:
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  soketi:
+    driver: bridge

@@ -247,12 +247,12 @@ Expected response:
 
 ## Next Steps
 
-- **[Configuration Guide](configuration.md)** - Configure Soketi for your needs
-- **[Getting Started](getting-started.md)** - Quick start guide
-- **[Deployment Guide](deployment/reverse-proxy.md)** - Deploy to production
+- **[Configuration Guide](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/configuration.md)** - Configure Soketi for your needs
+- **[Getting Started](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/getting-started.md)** - Quick start guide
+- **[Deployment Guide](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/deployment/reverse-proxy.md)** - Deploy to production
 
 ## Related Resources
 
 - [GitHub Repository](https://github.com/soketi/soketi.rs)
 - [Docker Hub](https://quay.io/repository/soketi/soketi)
-- [Troubleshooting Guide](troubleshooting.md)
+- [Troubleshooting Guide](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/troubleshooting.md)

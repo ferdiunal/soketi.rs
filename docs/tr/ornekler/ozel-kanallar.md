@@ -28,10 +28,10 @@
 ## Ön Koşullar
 
 - Node.js 18+ kurulu
-- soketi.rs sunucusu çalışıyor ([Başlangıç Kılavuzu](../baslangic.md)'na bakın)
+- soketi.rs sunucusu çalışıyor ([Başlangıç Kılavuzu](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/baslangic.md)'na bakın)
 - Express.js veya benzer backend framework
 - JavaScript/TypeScript temel bilgisi
-- [Temel Chat Örneği](./temel-chat.md)'ni anlama
+- [Temel Chat Örneği](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/ornekler/temel-chat.md)'ni anlama
 
 ## Kurulum Talimatları
 
@@ -1053,8 +1053,8 @@ function validateChannelName(channelName: string): boolean {
 
 ## İlgili Dokümantasyon
 
-- [Temel Chat Örneği](./temel-chat.md)
-- [Presence Kanalları Örneği](./presence.md)
-- [Kimlik Doğrulama Örneği](./kimlik-dogrulama.md)
-- [API Referansı](../api-referans.md)
+- [Temel Chat Örneği](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/ornekler/temel-chat.md)
+- [Presence Kanalları Örneği](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/ornekler/presence.md)
+- [Kimlik Doğrulama Örneği](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/ornekler/kimlik-dogrulama.md)
+- [API Referansı](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/api-referans.md)
 - [Güvenlik En İyi Uygulamaları](../baslangic.md#güvenlik)

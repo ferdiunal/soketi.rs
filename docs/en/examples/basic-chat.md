@@ -19,7 +19,7 @@ This example demonstrates how to build a basic real-time chat application using 
 ## Prerequisites
 
 - Node.js 18+ installed
-- soketi.rs server running (see [Getting Started](../getting-started.md))
+- soketi.rs server running (see [Getting Started](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/getting-started.md))
 - Basic knowledge of JavaScript/TypeScript
 - A text editor or IDE
 
@@ -434,9 +434,9 @@ User123: How is everyone doing? 10:30:30 AM
 
 ## Next Steps
 
-- **Add Private Channels**: Learn how to implement private channels with authentication in [Private Channels Example](./private-channels.md)
-- **Add Presence**: See who's online with [Presence Channels Example](./presence.md)
-- **Add Authentication**: Secure your chat with [Authentication Example](./authentication.md)
+- **Add Private Channels**: Learn how to implement private channels with authentication in [Private Channels Example](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/examples/private-channels.md)
+- **Add Presence**: See who's online with [Presence Channels Example](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/examples/presence.md)
+- **Add Authentication**: Secure your chat with [Authentication Example](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/examples/authentication.md)
 - **Server-Side Events**: Learn how to trigger events from your backend
 - **Message History**: Implement message persistence with a database
 - **User Profiles**: Add avatars and user profiles
@@ -445,7 +445,7 @@ User123: How is everyone doing? 10:30:30 AM
 
 ## Related Documentation
 
-- [Getting Started Guide](../getting-started.md)
-- [API Reference](../api-reference.md)
-- [Configuration Guide](../configuration.md)
-- [Troubleshooting](../troubleshooting.md)
+- [Getting Started Guide](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/getting-started.md)
+- [API Reference](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/api-reference.md)
+- [Configuration Guide](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/configuration.md)
+- [Troubleshooting](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/troubleshooting.md)

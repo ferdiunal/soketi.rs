@@ -5,8 +5,8 @@
 [![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)](https://www.rust-lang.org/)
 [![Crates.io](https://img.shields.io/crates/v/soketi-rs.svg)](https://crates.io/crates/soketi-rs)
 [![Documentation](https://docs.rs/soketi-rs/badge.svg)](https://docs.rs/soketi-rs)
-[![Build Durumu](https://img.shields.io/github/actions/workflow/status/ferdiunal/soketi-rs/release.yml?branch=main)](https://github.com/ferdiunal/soketi-rs/actions)
-[![Versiyon](https://img.shields.io/github/v/release/ferdiunal/soketi-rs)](https://github.com/ferdiunal/soketi-rs/releases)
+[![Build Durumu](https://img.shields.io/github/actions/workflow/status/ferdiunal/soketi-rs/release.yml?branch=main)]actions)
+[![Versiyon](https://img.shields.io/github/v/release/ferdiunal/soketi-rs)]releases)
 [![Lisans](https://img.shields.io/badge/lisans-GPL--3.0-blue.svg)](LICENSE)
 [![Docker](https://img.shields.io/docker/pulls/funal/soketi-rs)](https://hub.docker.com/r/funal/soketi-rs)
 [![Docker İmaj Boyutu](https://img.shields.io/docker/image-size/funal/soketi-rs/latest)](https://hub.docker.com/r/funal/soketi-rs)
@@ -64,7 +64,7 @@ docker run -d \
 
 ```bash
 # Repository'yi klonlayın
-git clone https://github.com/ferdiunal/soketi-rs.git
+git clone https://github.com/ferdiunal/soketi.rs.git
 cd soketi-rs
 
 # Tüm servisleri başlatın
@@ -103,7 +103,7 @@ cargo build --release
 
 ```bash
 # Repository'yi klonlayın
-git clone https://github.com/ferdiunal/soketi-rs.git
+git clone https://github.com/ferdiunal/soketi.rs.git
 cd soketi-rs
 
 # Release binary'sini derleyin
@@ -184,7 +184,7 @@ METRICS_PORT=9601
 
 ### Gelişmiş Yapılandırma
 
-Detaylı yapılandırma seçenekleri için [Yapılandırma Kılavuzu](docs/tr/yapilandirma.md) dosyasına bakın:
+Detaylı yapılandırma seçenekleri için [Yapılandırma Kılavuzu]wiki/Yapilandirma) dosyasına bakın:
 - Uygulama yönetimi (Array, MySQL, PostgreSQL, DynamoDB)
 - Adaptörler (Local, Redis, NATS, Cluster)
 - Hız sınırlama ve webhook'lar
@@ -294,10 +294,10 @@ pusher.trigger(['channel-1', 'channel-2'], 'my-event', {
 ```
 
 Daha fazla örnek için:
-- [Temel Chat Örneği](docs/tr/ornekler/temel-chat.md)
-- [Kimlik Doğrulama Örnekleri](docs/tr/ornekler/kimlik-dogrulama.md)
-- [Özel Kanallar](docs/tr/ornekler/ozel-kanallar.md)
-- [Presence Kanalları](docs/tr/ornekler/presence.md)
+- [Temel Chat Örneği]wiki/Temel-Chat-Ornegi)
+- [Kimlik Doğrulama Örnekleri]wiki/Kimlik-Dogrulama-Ornekleri)
+- [Özel Kanallar]wiki/Ozel-Kanallar)
+- [Presence Kanalları]wiki/Presence-Kanallari)
 
 ## 🐳 Docker Dağıtımı
 
@@ -409,50 +409,52 @@ open http://localhost:3001
 Kapsamlı dokümantasyon birden fazla dilde mevcuttur:
 
 ### İngilizce Dokümantasyon
-- [Getting Started](docs/en/getting-started.md) - Hızlı başlangıç kılavuzu ve temel kavramlar
-- [Installation](docs/en/installation.md) - Detaylı kurulum talimatları
-- [Configuration](docs/en/configuration.md) - Tam yapılandırma referansı
-- [API Reference](docs/en/api-reference.md) - HTTP ve WebSocket API dokümantasyonu
-- [Troubleshooting](docs/en/troubleshooting.md) - Yaygın sorunlar ve çözümler
+- [Getting Started]wiki/Getting-Started) - Hızlı başlangıç kılavuzu ve temel kavramlar
+- [Installation]wiki/Installation) - Detaylı kurulum talimatları
+- [Configuration]wiki/Configuration) - Tam yapılandırma referansı
+- [Environment Variables]wiki/Environment-Variables) - Ortam değişkenleri yapılandırma rehberi
+- [API Reference]wiki/API-Reference) - HTTP ve WebSocket API dokümantasyonu
+- [Troubleshooting]wiki/Troubleshooting) - Yaygın sorunlar ve çözümler
 
 #### Deployment Kılavuzları
-- [Vercel Deployment](docs/en/deployment/vercel.md) - Vercel'e deployment
-- [Netlify Deployment](docs/en/deployment/netlify.md) - Netlify'a deployment
-- [Reverse Proxy Setup](docs/en/deployment/reverse-proxy.md) - HTTP/2 ve HTTP/3 ile Caddy ve Nginx yapılandırması
+- [Vercel Deployment]wiki/Vercel-Deployment) - Vercel'e deployment
+- [Netlify Deployment]wiki/Netlify-Deployment) - Netlify'a deployment
+- [Reverse Proxy Setup]wiki/Reverse-Proxy-Setup) - HTTP/2 ve HTTP/3 ile Caddy ve Nginx yapılandırması
 
 #### Kod Örnekleri
-- [Basic Chat](docs/en/examples/basic-chat.md) - Basit chat uygulaması
-- [Authentication](docs/en/examples/authentication.md) - Kullanıcı kimlik doğrulama kalıpları
-- [Private Channels](docs/en/examples/private-channels.md) - Güvenli özel mesajlaşma
-- [Presence Channels](docs/en/examples/presence.md) - Gerçek zamanlı kullanıcı varlığı
+- [Basic Chat]wiki/Basic-Chat-Example) - Basit chat uygulaması
+- [Authentication]wiki/Authentication-Examples) - Kullanıcı kimlik doğrulama kalıpları
+- [Private Channels]wiki/Private-Channels) - Güvenli özel mesajlaşma
+- [Presence Channels]wiki/Presence-Channels) - Gerçek zamanlı kullanıcı varlığı
 
 ### Türkçe Dokümantasyon
-- [Başlangıç](docs/tr/baslangic.md) - Hızlı başlangıç kılavuzu ve temel kavramlar
-- [Kurulum](docs/tr/kurulum.md) - Detaylı kurulum talimatları
-- [Yapılandırma](docs/tr/yapilandirma.md) - Tam yapılandırma referansı
-- [API Referansı](docs/tr/api-referans.md) - HTTP ve WebSocket API dokümantasyonu
-- [Sorun Giderme](docs/tr/sorun-giderme.md) - Yaygın sorunlar ve çözümler
+- [Başlangıç]wiki/Baslangic) - Hızlı başlangıç kılavuzu ve temel kavramlar
+- [Kurulum]wiki/Kurulum) - Detaylı kurulum talimatları
+- [Yapılandırma]wiki/Yapilandirma) - Tam yapılandırma referansı
+- [Ortam Değişkenleri]wiki/Ortam-Degiskenleri) - Ortam değişkenleri ile yapılandırma rehberi
+- [API Referansı]wiki/API-Referansi) - HTTP ve WebSocket API dokümantasyonu
+- [Sorun Giderme]wiki/Sorun-Giderme) - Yaygın sorunlar ve çözümler
 
 #### Deployment Kılavuzları
-- [Vercel Deployment](docs/tr/deployment/vercel.md) - Vercel'e deployment
-- [Netlify Deployment](docs/tr/deployment/netlify.md) - Netlify'a deployment
-- [Reverse Proxy Kurulumu](docs/tr/deployment/reverse-proxy.md) - HTTP/2 ve HTTP/3 ile Caddy ve Nginx yapılandırması
+- [Vercel Deployment]wiki/Vercel-Deployment-TR) - Vercel'e deployment
+- [Netlify Deployment]wiki/Netlify-Deployment-TR) - Netlify'a deployment
+- [Reverse Proxy Kurulumu]wiki/Reverse-Proxy-Kurulumu) - HTTP/2 ve HTTP/3 ile Caddy ve Nginx yapılandırması
 
 #### Kod Örnekleri
-- [Temel Chat](docs/tr/ornekler/temel-chat.md) - Basit chat uygulaması
-- [Kimlik Doğrulama](docs/tr/ornekler/kimlik-dogrulama.md) - Kullanıcı kimlik doğrulama kalıpları
-- [Özel Kanallar](docs/tr/ornekler/ozel-kanallar.md) - Güvenli özel mesajlaşma
-- [Presence](docs/tr/ornekler/presence.md) - Gerçek zamanlı kullanıcı varlığı
+- [Temel Chat]wiki/Temel-Chat-Ornegi) - Basit chat uygulaması
+- [Kimlik Doğrulama]wiki/Kimlik-Dogrulama-Ornekleri) - Kullanıcı kimlik doğrulama kalıpları
+- [Özel Kanallar]wiki/Ozel-Kanallar) - Güvenli özel mesajlaşma
+- [Presence]wiki/Presence-Kanallari) - Gerçek zamanlı kullanıcı varlığı
 
 ### İleri Düzey Konular
-- [MySQL Kurulumu](docs/MYSQL_SETUP.md) - MySQL uygulama yöneticisi yapılandırması
-- [PostgreSQL Kurulumu](docs/POSTGRES_SETUP.md) - PostgreSQL uygulama yöneticisi yapılandırması
-- [DynamoDB Kurulumu](docs/DYNAMODB_SETUP.md) - DynamoDB uygulama yöneticisi yapılandırması
-- [Redis Adaptörü](docs/REDIS_ADAPTER_IMPLEMENTATION.md) - Redis kümeleme kurulumu
-- [NATS Adaptörü](docs/NATS_ADAPTER_IMPLEMENTATION.md) - NATS mesajlaşma entegrasyonu
-- [Cluster Adaptörü](docs/CLUSTER_ADAPTER_IMPLEMENTATION.md) - Yerel kümeleme
-- [Lambda Webhook'ları](docs/LAMBDA_WEBHOOKS.md) - AWS Lambda webhook entegrasyonu
-- [SQS Kuyruk Yöneticisi](docs/sqs_queue_manager.md) - AWS SQS kuyruk yapılandırması
+- [MySQL Kurulumu]wiki/MySQL-Setup) - MySQL uygulama yöneticisi yapılandırması
+- [PostgreSQL Kurulumu]wiki/PostgreSQL-Setup) - PostgreSQL uygulama yöneticisi yapılandırması
+- [DynamoDB Kurulumu]wiki/DynamoDB-Setup) - DynamoDB uygulama yöneticisi yapılandırması
+- [Redis Adaptörü]wiki/Redis-Adapter) - Redis kümeleme kurulumu
+- [NATS Adaptörü]wiki/NATS-Adapter) - NATS mesajlaşma entegrasyonu
+- [Cluster Adaptörü]wiki/Cluster-Adapter) - Yerel kümeleme
+- [Lambda Webhook'ları]wiki/Lambda-Webhooks) - AWS Lambda webhook entegrasyonu
+- [SQS Kuyruk Yöneticisi]wiki/SQS-Queue-Manager) - AWS SQS kuyruk yapılandırması
 
 ## 📚 API Dokümantasyonu
 
@@ -503,7 +505,7 @@ GET /apps/{app_id}/channels
 GET /apps/{app_id}/channels/{channel_name}
 ```
 
-Tam API dokümantasyonu için [API Referansı](docs/tr/api-referans.md) dosyasına bakın.
+Tam API dokümantasyonu için [API Referansı]wiki/API-Referansi) dosyasına bakın.
 
 ## 📱 İstemci Kütüphaneleri
 
@@ -592,7 +594,7 @@ Katkılar memnuniyetle karşılanır! Detaylar için [CONTRIBUTING.md](CONTRIBUT
 
 ```bash
 # Repository'yi klonlayın
-git clone https://github.com/ferdiunal/soketi-rs.git
+git clone https://github.com/ferdiunal/soketi.rs.git
 cd soketi-rs
 
 # Bağımlılıkları yükleyin
@@ -617,9 +619,9 @@ Bu proje GPL-3.0 Lisansı altında lisanslanmıştır - detaylar için [LICENSE]
 
 ## 📞 Destek
 
-- **Dokümantasyon**: [English](docs/en/getting-started.md) | [Türkçe](docs/tr/baslangic.md)
-- **Sorunlar**: [GitHub Issues](https://github.com/ferdiunal/soketi-rs/issues)
-- **Tartışmalar**: [GitHub Discussions](https://github.com/ferdiunal/soketi-rs/discussions)
+- **Dokümantasyon**: [English]wiki/Getting-Started) | [Türkçe]wiki/Baslangic)
+- **Sorunlar**: [GitHub Issues]issues)
+- **Tartışmalar**: [GitHub Discussions]discussions)
 - **Discord**: [Discord'umuza katılın](https://discord.gg/soketi)
 
 ---

@@ -109,6 +109,26 @@ pub struct Options {
     #[serde(default)]
     pub app_manager_cache_ttl: Option<u64>,
 
+    /// Array app manager apps (JSON string)
+    #[arg(long, env = "PUSHER_APP_MANAGER_ARRAY_APPS")]
+    #[serde(default)]
+    pub app_manager_array_apps: Option<String>,
+
+    /// Default app ID (creates a single default app)
+    #[arg(long, env = "PUSHER_DEFAULT_APP_ID")]
+    #[serde(default)]
+    pub default_app_id: Option<String>,
+
+    /// Default app key (creates a single default app)
+    #[arg(long, env = "PUSHER_DEFAULT_APP_KEY")]
+    #[serde(default)]
+    pub default_app_key: Option<String>,
+
+    /// Default app secret (creates a single default app)
+    #[arg(long, env = "PUSHER_DEFAULT_APP_SECRET")]
+    #[serde(default)]
+    pub default_app_secret: Option<String>,
+
     /// DynamoDB table name
     #[arg(long, env = "PUSHER_DYNAMODB_TABLE")]
     #[serde(default)]
@@ -493,6 +513,33 @@ impl Options {
         if let Some(ttl) = self.app_manager_cache_ttl {
             config.app_manager.cache.ttl_seconds = ttl;
         }
+
+        // Handle array apps from environment variable (JSON string)
+        if let Some(apps_json) = &self.app_manager_array_apps {
+            if let Ok(apps) = serde_json::from_str::<Vec<crate::app::App>>(apps_json) {
+                config.app_manager.array.apps = apps;
+            }
+        }
+
+        // Handle default app creation from environment variables
+        if let (Some(id), Some(key), Some(secret)) = (
+            &self.default_app_id,
+            &self.default_app_key,
+            &self.default_app_secret,
+        ) {
+            // Create a default app if all three values are provided
+            let default_app = crate::app::App::new(id.clone(), key.clone(), secret.clone());
+            
+            // If no apps exist, add the default app
+            // If apps exist, replace the first one or add it
+            if config.app_manager.array.apps.is_empty() {
+                config.app_manager.array.apps.push(default_app);
+            } else {
+                // Replace first app with default app
+                config.app_manager.array.apps[0] = default_app;
+            }
+        }
+
         if let Some(table) = &self.dynamodb_table {
             config.app_manager.dynamodb.table = table.clone();
         }

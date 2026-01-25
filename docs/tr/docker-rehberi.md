@@ -165,4 +165,4 @@ docker-compose up -d
 
 ---
 
-Detaylı dokümantasyon için [Başlangıç](baslangic.md) ve [Yapılandırma](yapilandirma.md) sayfalarına bakın.
+Detaylı dokümantasyon için [Başlangıç](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/baslangic.md) ve [Yapılandırma](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/yapilandirma.md) sayfalarına bakın.

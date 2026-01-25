@@ -337,4 +337,4 @@ CloudWatch metriklerini izleyin:
 
 ---
 
-Daha fazla bilgi için [Yapılandırma](yapilandirma.md) ve [Deployment](docker-deployment.md) sayfalarına bakın.
+Daha fazla bilgi için [Yapılandırma](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/yapilandirma.md) ve [Deployment](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/docker-deployment.md) sayfalarına bakın.

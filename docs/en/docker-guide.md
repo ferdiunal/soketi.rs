@@ -165,4 +165,4 @@ docker-compose up -d
 
 ---
 
-For detailed documentation, see [Getting Started](getting-started.md) and [Configuration](configuration.md).
+For detailed documentation, see [Getting Started](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/getting-started.md) and [Configuration](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/configuration.md).

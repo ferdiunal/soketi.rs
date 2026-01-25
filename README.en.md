@@ -5,8 +5,8 @@
 [![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)](https://www.rust-lang.org/)
 [![Crates.io](https://img.shields.io/crates/v/soketi-rs.svg)](https://crates.io/crates/soketi-rs)
 [![Documentation](https://docs.rs/soketi-rs/badge.svg)](https://docs.rs/soketi-rs)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/ferdiunal/soketi-rs/release.yml?branch=main)](https://github.com/ferdiunal/soketi-rs/actions)
-[![Version](https://img.shields.io/github/v/release/ferdiunal/soketi-rs)](https://github.com/ferdiunal/soketi-rs/releases)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/ferdiunal/soketi-rs/release.yml?branch=main)]actions)
+[![Version](https://img.shields.io/github/v/release/ferdiunal/soketi-rs)]releases)
 [![License](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
 [![Docker](https://img.shields.io/docker/pulls/funal/soketi-rs)](https://hub.docker.com/r/funal/soketi-rs)
 [![Docker Image Size](https://img.shields.io/docker/image-size/funal/soketi-rs/latest)](https://hub.docker.com/r/funal/soketi-rs)
@@ -64,7 +64,7 @@ docker run -d \
 
 ```bash
 # Clone the repository
-git clone https://github.com/ferdiunal/soketi-rs.git
+git clone https://github.com/ferdiunal/soketi.rs.git
 cd soketi-rs
 
 # Start all services
@@ -103,7 +103,7 @@ cargo build --release
 
 ```bash
 # Clone repository
-git clone https://github.com/ferdiunal/soketi-rs.git
+git clone https://github.com/ferdiunal/soketi.rs.git
 cd soketi-rs
 
 # Build release binary
@@ -184,7 +184,7 @@ METRICS_PORT=9601
 
 ### Advanced Configuration
 
-See the [Configuration Guide](docs/en/configuration.md) for detailed configuration options including:
+See the [Configuration Guide](https://github.com/ferdiunal/soketi.rs/wiki/Configuration) for detailed configuration options including:
 - App management (Array, MySQL, PostgreSQL, DynamoDB)
 - Adapters (Local, Redis, NATS, Cluster)
 - Rate limiting and webhooks
@@ -294,60 +294,62 @@ pusher.trigger(['channel-1', 'channel-2'], 'my-event', {
 ```
 
 For more examples, see:
-- [Basic Chat Example](docs/en/examples/basic-chat.md)
-- [Authentication Examples](docs/en/examples/authentication.md)
-- [Private Channels](docs/en/examples/private-channels.md)
-- [Presence Channels](docs/en/examples/presence.md)
+- [Basic Chat Example](https://github.com/ferdiunal/soketi.rs/wiki/Basic-Chat-Example)
+- [Authentication Examples](https://github.com/ferdiunal/soketi.rs/wiki/Authentication-Examples)
+- [Private Channels](https://github.com/ferdiunal/soketi.rs/wiki/Private-Channels)
+- [Presence Channels](https://github.com/ferdiunal/soketi.rs/wiki/Presence-Channels)
 
 ## 📚 Documentation
 
 Comprehensive documentation is available in multiple languages:
 
 ### English Documentation
-- [Getting Started](docs/en/getting-started.md) - Quick start guide and basic concepts
-- [Installation](docs/en/installation.md) - Detailed installation instructions
-- [Configuration](docs/en/configuration.md) - Complete configuration reference
-- [API Reference](docs/en/api-reference.md) - HTTP and WebSocket API documentation
-- [Troubleshooting](docs/en/troubleshooting.md) - Common issues and solutions
+- [Getting Started](https://github.com/ferdiunal/soketi.rs/wiki/Getting-Started) - Quick start guide and basic concepts
+- [Installation](https://github.com/ferdiunal/soketi.rs/wiki/Installation) - Detailed installation instructions
+- [Configuration](https://github.com/ferdiunal/soketi.rs/wiki/Configuration) - Complete configuration reference
+- [Environment Variables](https://github.com/ferdiunal/soketi.rs/wiki/Environment-Variables) - Environment variables configuration guide
+- [API Reference](https://github.com/ferdiunal/soketi.rs/wiki/API-Reference) - HTTP and WebSocket API documentation
+- [Troubleshooting](https://github.com/ferdiunal/soketi.rs/wiki/Troubleshooting) - Common issues and solutions
 
 #### Deployment Guides
-- [Vercel Deployment](docs/en/deployment/vercel.md) - Deploy to Vercel
-- [Netlify Deployment](docs/en/deployment/netlify.md) - Deploy to Netlify
-- [Reverse Proxy Setup](docs/en/deployment/reverse-proxy.md) - Caddy and Nginx configuration with HTTP/2 and HTTP/3
+- [Vercel Deployment](https://github.com/ferdiunal/soketi.rs/wiki/Vercel-Deployment) - Deploy to Vercel
+- [Netlify Deployment](https://github.com/ferdiunal/soketi.rs/wiki/Netlify-Deployment) - Deploy to Netlify
+- [Reverse Proxy Setup](https://github.com/ferdiunal/soketi.rs/wiki/Reverse-Proxy-Setup) - Caddy and Nginx configuration with HTTP/2 and HTTP/3
 
 #### Code Examples
-- [Basic Chat](docs/en/examples/basic-chat.md) - Simple chat application
-- [Authentication](docs/en/examples/authentication.md) - User authentication patterns
-- [Private Channels](docs/en/examples/private-channels.md) - Secure private messaging
-- [Presence Channels](docs/en/examples/presence.md) - Real-time user presence
+- [Basic Chat](https://github.com/ferdiunal/soketi.rs/wiki/Basic-Chat-Example) - Simple chat application
+- [Authentication](https://github.com/ferdiunal/soketi.rs/wiki/Authentication-Examples) - User authentication patterns
+- [Private Channels](https://github.com/ferdiunal/soketi.rs/wiki/Private-Channels) - Secure private messaging
+- [Presence Channels](https://github.com/ferdiunal/soketi.rs/wiki/Presence-Channels) - Real-time user presence
 
 ### Turkish Documentation (Türkçe Dokümantasyon)
-- [Başlangıç](docs/tr/baslangic.md) - Hızlı başlangıç kılavuzu
-- [Kurulum](docs/tr/kurulum.md) - Detaylı kurulum talimatları
-- [Yapılandırma](docs/tr/yapilandirma.md) - Yapılandırma referansı
-- [API Referansı](docs/tr/api-referans.md) - HTTP ve WebSocket API dokümantasyonu
-- [Sorun Giderme](docs/tr/sorun-giderme.md) - Yaygın sorunlar ve çözümler
+- [Başlangıç](https://github.com/ferdiunal/soketi.rs/wiki/Baslangic) - Hızlı başlangıç kılavuzu
+- [Kurulum](https://github.com/ferdiunal/soketi.rs/wiki/Kurulum) - Detaylı kurulum talimatları
+- [Yapılandırma](https://github.com/ferdiunal/soketi.rs/wiki/Yapilandirma) - Yapılandırma referansı
+- [Ortam Değişkenleri](https://github.com/ferdiunal/soketi.rs/wiki/Ortam-Degiskenleri) - Ortam değişkenleri yapılandırma rehberi
+- [API Referansı](https://github.com/ferdiunal/soketi.rs/wiki/API-Referansi) - HTTP ve WebSocket API dokümantasyonu
+- [Sorun Giderme](https://github.com/ferdiunal/soketi.rs/wiki/Sorun-Giderme) - Yaygın sorunlar ve çözümler
 
 #### Deployment Kılavuzları
-- [Vercel Deployment](docs/tr/deployment/vercel.md) - Vercel'e deployment
-- [Netlify Deployment](docs/tr/deployment/netlify.md) - Netlify'a deployment
-- [Reverse Proxy Kurulumu](docs/tr/deployment/reverse-proxy.md) - Caddy ve Nginx yapılandırması
+- [Vercel Deployment](https://github.com/ferdiunal/soketi.rs/wiki/Vercel-Deployment-TR) - Vercel'e deployment
+- [Netlify Deployment](https://github.com/ferdiunal/soketi.rs/wiki/Netlify-Deployment-TR) - Netlify'a deployment
+- [Reverse Proxy Kurulumu](https://github.com/ferdiunal/soketi.rs/wiki/Reverse-Proxy-Kurulumu) - Caddy ve Nginx yapılandırması
 
 #### Kod Örnekleri
-- [Temel Chat](docs/tr/ornekler/temel-chat.md) - Basit chat uygulaması
-- [Kimlik Doğrulama](docs/tr/ornekler/kimlik-dogrulama.md) - Kullanıcı kimlik doğrulama
-- [Özel Kanallar](docs/tr/ornekler/ozel-kanallar.md) - Güvenli özel mesajlaşma
-- [Presence](docs/tr/ornekler/presence.md) - Gerçek zamanlı kullanıcı takibi
+- [Temel Chat](https://github.com/ferdiunal/soketi.rs/wiki/Temel-Chat-Ornegi) - Basit chat uygulaması
+- [Kimlik Doğrulama](https://github.com/ferdiunal/soketi.rs/wiki/Kimlik-Dogrulama-Ornekleri) - Kullanıcı kimlik doğrulama
+- [Özel Kanallar](https://github.com/ferdiunal/soketi.rs/wiki/Ozel-Kanallar) - Güvenli özel mesajlaşma
+- [Presence](https://github.com/ferdiunal/soketi.rs/wiki/Presence-Kanallari) - Gerçek zamanlı kullanıcı takibi
 
 ### Advanced Topics
-- [MySQL Setup](docs/MYSQL_SETUP.md) - MySQL app manager configuration
-- [PostgreSQL Setup](docs/POSTGRES_SETUP.md) - PostgreSQL app manager configuration
-- [DynamoDB Setup](docs/DYNAMODB_SETUP.md) - DynamoDB app manager configuration
-- [Redis Adapter](docs/REDIS_ADAPTER_IMPLEMENTATION.md) - Redis clustering setup
-- [NATS Adapter](docs/NATS_ADAPTER_IMPLEMENTATION.md) - NATS messaging integration
-- [Cluster Adapter](docs/CLUSTER_ADAPTER_IMPLEMENTATION.md) - Native clustering
-- [Lambda Webhooks](docs/LAMBDA_WEBHOOKS.md) - AWS Lambda webhook integration
-- [SQS Queue Manager](docs/sqs_queue_manager.md) - AWS SQS queue configuration
+- [MySQL Setup](https://github.com/ferdiunal/soketi.rs/wiki/MySQL-Setup) - MySQL app manager configuration
+- [PostgreSQL Setup](https://github.com/ferdiunal/soketi.rs/wiki/PostgreSQL-Setup) - PostgreSQL app manager configuration
+- [DynamoDB Setup](https://github.com/ferdiunal/soketi.rs/wiki/DynamoDB-Setup) - DynamoDB app manager configuration
+- [Redis Adapter](https://github.com/ferdiunal/soketi.rs/wiki/Redis-Adapter) - Redis clustering setup
+- [NATS Adapter](https://github.com/ferdiunal/soketi.rs/wiki/NATS-Adapter) - NATS messaging integration
+- [Cluster Adapter](https://github.com/ferdiunal/soketi.rs/wiki/Cluster-Adapter) - Native clustering
+- [Lambda Webhooks](https://github.com/ferdiunal/soketi.rs/wiki/Lambda-Webhooks) - AWS Lambda webhook integration
+- [SQS Queue Manager](https://github.com/ferdiunal/soketi.rs/wiki/SQS-Queue-Manager) - AWS SQS queue configuration
 
 ## 🐳 Docker Deployment
 
@@ -503,7 +505,7 @@ GET /apps/{app_id}/channels
 GET /apps/{app_id}/channels/{channel_name}
 ```
 
-See the [API Reference](docs/en/api-reference.md) for complete API documentation.
+See the [API Reference](https://github.com/ferdiunal/soketi.rs/wiki/API-Reference) for complete API documentation.
 
 ## 📱 Client Libraries
 
@@ -592,7 +594,7 @@ Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for de
 
 ```bash
 # Clone repository
-git clone https://github.com/ferdiunal/soketi-rs.git
+git clone https://github.com/ferdiunal/soketi.rs.git
 cd soketi-rs
 
 # Install dependencies
@@ -617,9 +619,9 @@ This project is licensed under the GPL-3.0 License - see the [LICENSE](LICENSE) 
 
 ## 📞 Support
 
-- **Documentation**: [English](docs/en/getting-started.md) | [Türkçe](docs/tr/baslangic.md)
-- **Issues**: [GitHub Issues](https://github.com/ferdiunal/soketi-rs/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/ferdiunal/soketi-rs/discussions)
+- **Documentation**: [English](https://github.com/ferdiunal/soketi.rs/wiki/Getting-Started) | [Türkçe](https://github.com/ferdiunal/soketi.rs/wiki/Baslangic)
+- **Issues**: [GitHub Issues]issues)
+- **Discussions**: [GitHub Discussions]discussions)
 - **Discord**: [Join our Discord](https://discord.gg/soketi)
 
 ---

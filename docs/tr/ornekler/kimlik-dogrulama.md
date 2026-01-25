@@ -28,7 +28,7 @@ Bu kılavuz, soketi.rs uygulamalarınızı güvenli hale getirmek için çeşitl
 - Node.js 18+ kurulu
 - soketi.rs sunucusu çalışıyor
 - Express.js veya benzer backend framework
-- [Özel Kanallar](./ozel-kanallar.md)'ı anlama
+- [Özel Kanallar](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/ornekler/ozel-kanallar.md)'ı anlama
 - Kimlik doğrulama kavramları hakkında temel bilgi
 
 ## Kimlik Doğrulama Desenleri
@@ -591,9 +591,9 @@ Kullanıcı çıkış yaptı: ayse@example.com
 
 ## İlgili Dokümantasyon
 
-- [Temel Chat Örneği](./temel-chat.md)
-- [Özel Kanallar Örneği](./ozel-kanallar.md)
-- [Presence Kanalları Örneği](./presence.md)
-- [API Referansı](../api-referans.md)
+- [Temel Chat Örneği](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/ornekler/temel-chat.md)
+- [Özel Kanallar Örneği](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/ornekler/ozel-kanallar.md)
+- [Presence Kanalları Örneği](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/ornekler/presence.md)
+- [API Referansı](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/api-referans.md)
 - [Güvenlik En İyi Uygulamaları](../baslangic.md#güvenlik)
-- [Yapılandırma Kılavuzu](../yapilandirma.md)
+- [Yapılandırma Kılavuzu](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/yapilandirma.md)

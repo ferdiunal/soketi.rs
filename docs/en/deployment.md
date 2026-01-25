@@ -498,4 +498,4 @@ spec:
 
 ---
 
-For more information, see the [main documentation](../README.md).
+For more information, see the [main documentation](https://github.com/ferdiunal/soketi.rs/blob/main/docs/README.md).

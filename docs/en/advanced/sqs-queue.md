@@ -269,7 +269,7 @@ This implementation satisfies the following requirements:
 
 ## See Also
 
-- [Redis Queue Manager](redis_queue_manager.md)
-- [Sync Queue Manager](sync_queue_manager.md)
-- [Webhook Sender](webhook_sender.md)
+- [Redis Queue Manager](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/advanced/redis_queue_manager.md)
+- [Sync Queue Manager](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/advanced/sync_queue_manager.md)
+- [Webhook Sender](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/advanced/webhook_sender.md)
 - [AWS SQS Documentation](https://docs.aws.amazon.com/sqs/)

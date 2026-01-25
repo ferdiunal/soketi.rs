@@ -1475,13 +1475,13 @@ docker restart soketi
 
 ## İlgili Kaynaklar
 
-- [Başlangıç Kılavuzu](baslangic.md)
-- [Yapılandırma Referansı](yapilandirma.md)
-- [API Referansı](api-referans.md)
-- [Deployment Kılavuzu](deployment/reverse-proxy.md)
-- [Vercel Deployment](deployment/vercel.md)
-- [Netlify Deployment](deployment/netlify.md)
-- [Örnekler](ornekler/temel-chat.md)
+- [Başlangıç Kılavuzu](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/baslangic.md)
+- [Yapılandırma Referansı](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/yapilandirma.md)
+- [API Referansı](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/api-referans.md)
+- [Deployment Kılavuzu](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/deployment/reverse-proxy.md)
+- [Vercel Deployment](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/deployment/vercel.md)
+- [Netlify Deployment](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/deployment/netlify.md)
+- [Örnekler](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/ornekler/temel-chat.md)
 
 ---
 

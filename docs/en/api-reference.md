@@ -1984,9 +1984,9 @@ upstream soketi_backend {
 
 ## Next Steps
 
-- **[Getting Started](getting-started.md)** - Quick start guide
-- **[Examples](examples/basic-chat.md)** - Code examples
-- **[Configuration](configuration.md)** - Configuration reference
+- **[Getting Started](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/getting-started.md)** - Quick start guide
+- **[Examples](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/examples/basic-chat.md)** - Code examples
+- **[Configuration](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/configuration.md)** - Configuration reference
 
 ## Related Resources
 

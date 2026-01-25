@@ -1986,9 +1986,9 @@ upstream soketi_backend {
 
 ## Sonraki Adımlar
 
-- **[Başlangıç](baslangic.md)** - Hızlı başlangıç kılavuzu
-- **[Örnekler](ornekler/temel-chat.md)** - Kod örnekleri
-- **[Yapılandırma](yapilandirma.md)** - Yapılandırma referansı
+- **[Başlangıç](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/baslangic.md)** - Hızlı başlangıç kılavuzu
+- **[Örnekler](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/ornekler/temel-chat.md)** - Kod örnekleri
+- **[Yapılandırma](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/yapilandirma.md)** - Yapılandırma referansı
 
 ## İlgili Kaynaklar
 

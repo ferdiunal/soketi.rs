@@ -18,7 +18,7 @@ exclude = [
     ".dockerignore"
 ]
 description = "High-performance, Pusher-compatible WebSocket server written in Rust with support for public, private, and presence channels"
-documentation = "https://github.com/ferdiunal/soketi-rs/tree/main/docs"
+documentation = "https://github.com/ferdiunal/soketi.rs/wiki"
 keywords = ["websocket", "pusher", "realtime", "server", "soketi"]
 categories = ["network-programming", "web-programming", "asynchronous"]
 

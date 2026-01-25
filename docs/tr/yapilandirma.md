@@ -58,22 +58,153 @@ soketi --config /path/to/config.json
 
 ## Ortam Değişkenleri
 
-Ortam değişkenlerini kullanarak yapılandırmayı geçersiz kılabilirsiniz:
+Tüm yapılandırma seçenekleri `PUSHER_` öneki ile ortam değişkenleri kullanılarak geçersiz kılınabilir.
+
+### Sunucu Yapılandırması
 
 | Değişken | Açıklama | Varsayılan |
 |----------|----------|------------|
-| `SOKETI_HOST` | Sunucu host | `0.0.0.0` |
-| `SOKETI_PORT` | Sunucu portu | `6001` |
-| `SOKETI_DEFAULT_APP_ID` | Varsayılan app ID | - |
-| `SOKETI_DEFAULT_APP_KEY` | Varsayılan app key | - |
-| `SOKETI_DEFAULT_APP_SECRET` | Varsayılan app secret | - |
-| `SOKETI_METRICS_ENABLED` | Metrikleri etkinleştir | `true` |
-| `SOKETI_METRICS_PORT` | Metrik portu | `9601` |
+| `PUSHER_HOST` | Sunucu host | `0.0.0.0` |
+| `PUSHER_PORT` | Sunucu portu | `6001` |
+| `PUSHER_DEBUG` | Debug modunu etkinleştir | `false` |
+| `PUSHER_MODE` | Sunucu modu (full, server, worker) | `full` |
 
-Örnek:
+### App Manager Yapılandırması
+
+| Değişken | Açıklama | Varsayılan |
+|----------|----------|------------|
+| `PUSHER_APP_MANAGER_DRIVER` | App manager driver (array, dynamodb, mysql, postgres) | `array` |
+| `PUSHER_APP_MANAGER_ARRAY_APPS` | JSON array formatında app listesi (array driver için) | `[]` |
+| `PUSHER_DEFAULT_APP_ID` | Varsayılan app ID (tek app oluşturur) | - |
+| `PUSHER_DEFAULT_APP_KEY` | Varsayılan app key (tek app oluşturur) | - |
+| `PUSHER_DEFAULT_APP_SECRET` | Varsayılan app secret (tek app oluşturur) | - |
+| `PUSHER_APP_MANAGER_CACHE_ENABLED` | App manager cache'i etkinleştir | `false` |
+| `PUSHER_APP_MANAGER_CACHE_TTL` | Cache TTL (saniye) | `3600` |
+
+### Adapter Yapılandırması
+
+| Değişken | Açıklama | Varsayılan |
+|----------|----------|------------|
+| `PUSHER_ADAPTER_DRIVER` | Adapter driver (local, cluster, redis, nats) | `local` |
+| `PUSHER_ADAPTER_REDIS_HOST` | Redis adapter host | `127.0.0.1` |
+| `PUSHER_ADAPTER_REDIS_PORT` | Redis adapter port | `6379` |
+| `PUSHER_ADAPTER_REDIS_DB` | Redis adapter veritabanı | `0` |
+| `PUSHER_ADAPTER_REDIS_PASSWORD` | Redis adapter şifresi | - |
+| `PUSHER_ADAPTER_CLUSTER_PORT` | Cluster adapter portu | `11002` |
+| `PUSHER_ADAPTER_NATS_SERVERS` | NATS sunucuları (virgülle ayrılmış) | `127.0.0.1:4222` |
+
+### Cache Yapılandırması
+
+| Değişken | Açıklama | Varsayılan |
+|----------|----------|------------|
+| `PUSHER_CACHE_DRIVER` | Cache driver (memory, redis) | `memory` |
+| `PUSHER_CACHE_REDIS_HOST` | Redis cache host | `127.0.0.1` |
+| `PUSHER_CACHE_REDIS_PORT` | Redis cache port | `6379` |
+| `PUSHER_CACHE_REDIS_PASSWORD` | Redis cache şifresi | - |
+
+### Metrik Yapılandırması
+
+| Değişken | Açıklama | Varsayılan |
+|----------|----------|------------|
+| `PUSHER_METRICS_ENABLED` | Metrikleri etkinleştir | `false` |
+| `PUSHER_METRICS_PORT` | Metrik portu | `9601` |
+| `PUSHER_METRICS_PREFIX` | Metrik öneki | `pusher` |
+
+### Veritabanı Yapılandırması (MySQL)
+
+| Değişken | Açıklama | Varsayılan |
+|----------|----------|------------|
+| `PUSHER_MYSQL_HOST` | MySQL host | `127.0.0.1` |
+| `PUSHER_MYSQL_PORT` | MySQL port | `3306` |
+| `PUSHER_MYSQL_USER` | MySQL kullanıcı | `root` |
+| `PUSHER_MYSQL_PASSWORD` | MySQL şifre | - |
+| `PUSHER_MYSQL_DATABASE` | MySQL veritabanı | `main` |
+
+### Veritabanı Yapılandırması (PostgreSQL)
+
+| Değişken | Açıklama | Varsayılan |
+|----------|----------|------------|
+| `PUSHER_POSTGRES_HOST` | PostgreSQL host | `127.0.0.1` |
+| `PUSHER_POSTGRES_PORT` | PostgreSQL port | `5432` |
+| `PUSHER_POSTGRES_USER` | PostgreSQL kullanıcı | `postgres` |
+| `PUSHER_POSTGRES_PASSWORD` | PostgreSQL şifre | - |
+| `PUSHER_POSTGRES_DATABASE` | PostgreSQL veritabanı | `main` |
+
+### Veritabanı Yapılandırması (DynamoDB)
+
+| Değişken | Açıklama | Varsayılan |
+|----------|----------|------------|
+| `PUSHER_DYNAMODB_TABLE` | DynamoDB tablo adı | `apps` |
+| `PUSHER_DYNAMODB_REGION` | AWS bölgesi | `us-east-1` |
+
+### Kuyruk Yapılandırması
+
+| Değişken | Açıklama | Varsayılan |
+|----------|----------|------------|
+| `PUSHER_QUEUE_DRIVER` | Kuyruk driver (sync, redis, sqs) | `sync` |
+| `PUSHER_QUEUE_REDIS_HOST` | Redis kuyruk host | `127.0.0.1` |
+| `PUSHER_QUEUE_REDIS_PORT` | Redis kuyruk port | `6379` |
+| `PUSHER_QUEUE_SQS_URL` | SQS kuyruk URL | - |
+| `PUSHER_QUEUE_SQS_REGION` | SQS bölgesi | `us-east-1` |
+
+### SSL Yapılandırması
+
+| Değişken | Açıklama | Varsayılan |
+|----------|----------|------------|
+| `PUSHER_SSL_ENABLED` | SSL'i etkinleştir | `false` |
+| `PUSHER_SSL_CERT_PATH` | SSL sertifika yolu | - |
+| `PUSHER_SSL_KEY_PATH` | SSL anahtar yolu | - |
+
+### CORS Yapılandırması
+
+| Değişken | Açıklama | Varsayılan |
+|----------|----------|------------|
+| `PUSHER_CORS_ENABLED` | CORS'u etkinleştir | `true` |
+| `PUSHER_CORS_ORIGINS` | İzin verilen origin'ler (virgülle ayrılmış) | `*` |
+
+### Örnekler
+
+#### Varsayılan App Kullanımı (Basit Kurulum)
 
 ```bash
-SOKETI_PORT=8080 soketi --config config.json
+PUSHER_DEFAULT_APP_ID=my-app \
+PUSHER_DEFAULT_APP_KEY=my-key \
+PUSHER_DEFAULT_APP_SECRET=my-secret \
+soketi-rs
+```
+
+#### JSON Array ile Birden Fazla App
+
+```bash
+PUSHER_APP_MANAGER_ARRAY_APPS='[{"id":"app1","key":"key1","secret":"secret1","enabled":true}]' \
+soketi-rs
+```
+
+#### Redis Adapter ile
+
+```bash
+PUSHER_ADAPTER_DRIVER=redis \
+PUSHER_ADAPTER_REDIS_HOST=localhost \
+PUSHER_ADAPTER_REDIS_PORT=6379 \
+PUSHER_ADAPTER_REDIS_PASSWORD=mypassword \
+soketi-rs
+```
+
+#### Docker Compose Örneği
+
+```yaml
+environment:
+  PUSHER_DEFAULT_APP_ID: "shopilens"
+  PUSHER_DEFAULT_APP_KEY: "shopilens-key"
+  PUSHER_DEFAULT_APP_SECRET: "shopilens-secret"
+  PUSHER_ADAPTER_DRIVER: "redis"
+  PUSHER_ADAPTER_REDIS_HOST: "redis"
+  PUSHER_ADAPTER_REDIS_PORT: "6379"
+  PUSHER_ADAPTER_REDIS_PASSWORD: "mypassword"
+  PUSHER_CACHE_DRIVER: "redis"
+  PUSHER_CACHE_REDIS_HOST: "redis"
+  PUSHER_METRICS_ENABLED: "true"
+  PUSHER_METRICS_PORT: "9601"
 ```
 
 ## App Manager Yapılandırması
@@ -369,14 +500,14 @@ Güvenli bağlantılar için SSL/TLS'yi etkinleştirin:
 
 ## Sonraki Adımlar
 
-- **[Başlangıç](baslangic.md)** - Hızlı başlangıç kılavuzu
-- **[API Referansı](api-referans.md)** - API dokümantasyonu
-- **[Deployment Kılavuzu](deployment/reverse-proxy.md)** - Production deployment
+- **[Başlangıç](baslangic)** - Hızlı başlangıç kılavuzu
+- **[API Referansı](api-referans)** - API dokümantasyonu
+- **[Deployment Kılavuzu](deployment/reverse-proxy)** - Production deployment
 
 ## İlgili Kaynaklar
 
-- [MySQL Kurulum Kılavuzu](../MYSQL_SETUP.md)
-- [PostgreSQL Kurulum Kılavuzu](../POSTGRES_SETUP.md)
-- [DynamoDB Kurulum Kılavuzu](../DYNAMODB_SETUP.md)
-- [Redis Adapter Implementasyonu](../REDIS_ADAPTER_IMPLEMENTATION.md)
-- [NATS Adapter Implementasyonu](../NATS_ADAPTER_IMPLEMENTATION.md)
+- [MySQL Kurulum Kılavuzu](../MYSQL_SETUP)
+- [PostgreSQL Kurulum Kılavuzu](../POSTGRES_SETUP)
+- [DynamoDB Kurulum Kılavuzu](../DYNAMODB_SETUP)
+- [Redis Adapter Implementasyonu](../REDIS_ADAPTER_IMPLEMENTATION)
+- [NATS Adapter Implementasyonu](../NATS_ADAPTER_IMPLEMENTATION)
