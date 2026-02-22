@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0](https://github.com/ferdiunal/soketi.rs/compare/v1.0.2...v1.1.0) (2026-02-22)
+
+### ✨ Features
+
+* **ci:** add Docker release workflow and update Dockerfile ([796eb9d](https://github.com/ferdiunal/soketi.rs/commit/796eb9d1b42dac19189240278596592358236c10))
+
+### 📚 Documentation
+
+* **_Sidebar.md:** add English language section header ([620d0ec](https://github.com/ferdiunal/soketi.rs/commit/620d0ec8728935396d5f04fa15456d473d495914))
+* update documentation structure and release configuration ([cdd5799](https://github.com/ferdiunal/soketi.rs/commit/cdd5799e669abd9b4c59780c8e828997e48b7ca2))
+
 ## [1.0.2](https://github.com/ferdiunal/soketi.rs/compare/v1.0.1...v1.0.2) (2026-01-25)
 
 ### 📚 Documentation
