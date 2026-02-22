@@ -27,9 +27,12 @@ RUN cargo build --release
 FROM debian:bookworm-slim
 
 # Install runtime dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     libssl3 \
+    && apt-get install -y --no-install-recommends --only-upgrade \
+    libssl3 \
+    openssl \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user
