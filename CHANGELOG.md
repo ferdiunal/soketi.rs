@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.5](https://github.com/ferdiunal/soketi.rs/compare/v1.2.4...v1.2.5) (2026-05-05)
+
+### 🐛 Bug Fixes
+
+* **config:** add serde(default) to all optional sub-config fields ([0f4382d](https://github.com/ferdiunal/soketi.rs/commit/0f4382d207a5fb9f6e08bd9136c246c8ee531041))
+
 ## [1.2.4](https://github.com/ferdiunal/soketi.rs/compare/v1.2.3...v1.2.4) (2026-05-05)
 
 ### 🐛 Bug Fixes
