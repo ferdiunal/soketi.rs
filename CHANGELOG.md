@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0](https://github.com/ferdiunal/soketi.rs/compare/v1.1.1...v1.2.0) (2026-05-05)
+
+### ✨ Features
+
+* **docker:** switch to distroless runtime and add multi-arch binary releases ([f52fa85](https://github.com/ferdiunal/soketi.rs/commit/f52fa851d061c9f30add66861ceebe30d6543cf2))
+
 ## [1.1.1](https://github.com/ferdiunal/soketi.rs/compare/v1.1.0...v1.1.1) (2026-03-14)
 
 ### ♻️ Code Refactoring
