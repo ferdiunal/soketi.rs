@@ -1,8 +1,6 @@
 name: Docker Release
 
 on:
-  release:
-    types: [published]
   workflow_dispatch:
     inputs:
       version:
@@ -44,24 +42,14 @@ jobs:
     
     - name: Extract version
       id: version
+      env:
+        INPUT_VERSION: ${{ github.event.inputs.version }}
       run: |
-        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-          VERSION="${{ github.event.inputs.version }}"
-        else
-          VERSION="${{ github.event.release.tag_name }}"
-        fi
-        VERSION=${VERSION#v}
+        VERSION="${INPUT_VERSION#v}"
         echo "version=$VERSION" >> $GITHUB_OUTPUT
-
-        # Major.minor extraction
-        MAJOR_MINOR=$(echo $VERSION | cut -d. -f1-2)
-        echo "major_minor=$MAJOR_MINOR" >> $GITHUB_OUTPUT
-
-        # Major extraction
-        MAJOR=$(echo $VERSION | cut -d. -f1)
-        echo "major=$MAJOR" >> $GITHUB_OUTPUT
-
-        echo "Building version: $VERSION (major.minor: $MAJOR_MINOR, major: $MAJOR)"
+        echo "major_minor=$(echo "$VERSION" | cut -d. -f1-2)" >> $GITHUB_OUTPUT
+        echo "major=$(echo "$VERSION" | cut -d. -f1)" >> $GITHUB_OUTPUT
+        echo "Building version: $VERSION"
     
     - name: Build and push multi-arch image
       uses: docker/build-push-action@v5

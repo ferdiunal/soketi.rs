@@ -3,64 +3,28 @@
 # GitHub: https://github.com/ferdiunal/soketi.rs
 
 # Stage 1: Builder
-FROM rust:1.93-bookworm as builder
+FROM rust:1.93-bookworm AS builder
 
-# Install build dependencies
-RUN apt-get update && apt-get install -y \
-    pkg-config \
-    libssl-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Create app directory
 WORKDIR /app
 
-# Copy manifests
 COPY Cargo.toml Cargo.lock ./
-
-# Copy source code (only src directory needed for build)
 COPY src ./src
 
-# Build release binary
 RUN cargo build --release
 
-# Stage 2: Runtime
-FROM debian:bookworm-slim
+# Stage 2: Runtime — distroless (no shell, no package manager, minimal CVE surface)
+# Kullanıcı: nonroot (UID 65532), glibc dahil, ~20 MB base
+FROM gcr.io/distroless/cc-debian12:nonroot
 
-# Install runtime dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates \
-    libssl3 \
-    && apt-get install -y --no-install-recommends --only-upgrade \
-    libssl3 \
-    openssl \
-    && rm -rf /var/lib/apt/lists/*
-
-# Create non-root user
-RUN useradd -m -u 1000 soketi
-
-# Create app directory
-WORKDIR /app
-
-# Copy binary from builder
 COPY --from=builder /app/target/release/soketi-rs /usr/local/bin/soketi-rs
+COPY --chown=65532:65532 deployment/docker/config.example.json /app/config.json
 
-# Copy default config
-COPY config.json /app/config.json
-
-# Change ownership
-RUN chown -R soketi:soketi /app
-
-# Switch to non-root user
-USER soketi
-
-# Expose ports
 EXPOSE 6001
 EXPOSE 9601
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD ["/bin/sh", "-c", "test -f /tmp/soketi.pid || exit 1"]
+# HEALTHCHECK burada kullanılamaz (shell yok); K8s liveness/readiness probe kullan:
+# livenessProbe:  httpGet: { path: /, port: 6001 }
+# readinessProbe: httpGet: { path: /ready, port: 6001 }
 
-# Run the application
-ENTRYPOINT ["soketi-rs"]
+ENTRYPOINT ["/usr/local/bin/soketi-rs"]
 CMD ["--config-file", "/app/config.json"]
