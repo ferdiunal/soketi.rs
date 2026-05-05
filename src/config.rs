@@ -32,6 +32,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// **Validates: Requirements 1.2, 14.1-14.10**
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct ServerConfig {
     /// Server host address (default: "0.0.0.0")
     pub host: String,
@@ -148,6 +149,7 @@ pub enum ServerMode {
 ///
 /// **Validates: Requirements 4.1-4.4**
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct AdapterConfig {
     /// Adapter driver to use
     pub driver: AdapterDriver,
@@ -207,6 +209,7 @@ pub enum AdapterDriver {
 /// };
 /// ```
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct RedisAdapterConfig {
     /// Redis server host (default: "127.0.0.1")
     pub host: String,
@@ -242,6 +245,7 @@ impl Default for RedisAdapterConfig {
 ///
 /// **Validates: Requirements 17.1-17.5**
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct ClusterAdapterConfig {
     /// UDP port for cluster communication (default: 11002)
     pub port: u16,
@@ -280,6 +284,7 @@ impl Default for ClusterAdapterConfig {
 /// };
 /// ```
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct NatsAdapterConfig {
     /// NATS server URLs (default: ["127.0.0.1:4222"])
     pub servers: Vec<String>,
@@ -310,6 +315,7 @@ impl Default for NatsAdapterConfig {
 
 /// App Manager configuration
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct AppManagerConfig {
     pub driver: AppManagerDriver,
     #[serde(default)]
@@ -351,6 +357,7 @@ pub struct ArrayAppManagerConfig {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct DynamoDbAppManagerConfig {
     pub table: String,
     pub region: String,
@@ -368,6 +375,7 @@ impl Default for DynamoDbAppManagerConfig {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct MysqlAppManagerConfig {
     pub host: String,
     pub port: u16,
@@ -393,6 +401,7 @@ impl Default for MysqlAppManagerConfig {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct PostgresAppManagerConfig {
     pub host: String,
     pub port: u16,
@@ -418,6 +427,7 @@ impl Default for PostgresAppManagerConfig {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct AppManagerCacheConfig {
     pub enabled: bool,
     pub ttl_seconds: u64,
@@ -434,6 +444,7 @@ impl Default for AppManagerCacheConfig {
 
 /// Cache Manager configuration
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct CacheConfig {
     pub driver: CacheDriver,
     #[serde(default)]
@@ -456,6 +467,7 @@ pub enum CacheDriver {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct RedisCacheConfig {
     pub host: String,
     pub port: u16,
@@ -480,6 +492,7 @@ impl Default for RedisCacheConfig {
 
 /// Rate Limiter configuration
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct RateLimiterConfig {
     pub driver: RateLimiterDriver,
     #[serde(default)]
@@ -503,6 +516,7 @@ pub enum RateLimiterDriver {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct RedisRateLimiterConfig {
     pub host: String,
     pub port: u16,
@@ -527,6 +541,7 @@ impl Default for RedisRateLimiterConfig {
 
 /// Queue Manager configuration
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct QueueConfig {
     pub driver: QueueDriver,
     #[serde(default)]
@@ -553,6 +568,7 @@ pub enum QueueDriver {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct RedisQueueConfig {
     pub host: String,
     pub port: u16,
@@ -576,6 +592,7 @@ impl Default for RedisQueueConfig {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct SqsQueueConfig {
     pub region: String,
     pub queue_url: String,
@@ -598,6 +615,7 @@ impl Default for SqsQueueConfig {
 
 /// Metrics configuration
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct MetricsConfig {
     pub enabled: bool,
     pub driver: MetricsDriver,
@@ -623,6 +641,7 @@ pub enum MetricsDriver {
 
 /// SSL configuration
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct SslConfig {
     pub enabled: bool,
     pub cert_path: String,
@@ -643,6 +662,7 @@ impl Default for SslConfig {
 
 /// CORS configuration
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct CorsConfig {
     pub enabled: bool,
     pub origins: Vec<String>,
@@ -671,6 +691,7 @@ impl Default for CorsConfig {
 
 /// Channel limits
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct ChannelLimits {
     pub max_name_length: u64,
     pub cache_ttl_seconds: u64,
@@ -687,6 +708,7 @@ impl Default for ChannelLimits {
 
 /// Event limits
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct EventLimits {
     pub max_channels_at_once: u64,
     pub max_name_length: u64,
@@ -707,6 +729,7 @@ impl Default for EventLimits {
 
 /// Presence limits
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct PresenceLimits {
     pub max_members_per_channel: u64,
     pub max_member_size_in_kb: f64,
@@ -723,6 +746,7 @@ impl Default for PresenceLimits {
 
 /// HTTP API configuration
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct HttpApiConfig {
     pub max_request_size_in_kb: f64,
     pub accept_traffic_memory_threshold_mb: u64,
@@ -739,6 +763,7 @@ impl Default for HttpApiConfig {
 
 /// Webhook configuration
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct WebhookConfig {
     pub batching_enabled: bool,
     pub batch_duration_ms: u64,
