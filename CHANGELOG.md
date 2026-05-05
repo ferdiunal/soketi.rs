@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.4](https://github.com/ferdiunal/soketi.rs/compare/v1.2.3...v1.2.4) (2026-05-05)
+
+### 🐛 Bug Fixes
+
+* **docker:** add static wget from busybox for shell-free healthcheck ([f57aaba](https://github.com/ferdiunal/soketi.rs/commit/f57aabac8b8c9bb2fb89a9ac4bd886542d5867ef))
+
 ## [1.2.3](https://github.com/ferdiunal/soketi.rs/compare/v1.2.2...v1.2.3) (2026-05-05)
 
 ### ⚡ Performance Improvements
