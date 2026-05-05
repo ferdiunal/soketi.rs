@@ -47,31 +47,44 @@ pub struct ServerConfig {
     pub shutdown_grace_period_ms: u64,
 
     /// Adapter configuration for socket management
+    #[serde(default)]
     pub adapter: AdapterConfig,
     /// App manager configuration for application credentials
+    #[serde(default)]
     pub app_manager: AppManagerConfig,
     /// Cache manager configuration
+    #[serde(default)]
     pub cache: CacheConfig,
     /// Rate limiter configuration
+    #[serde(default)]
     pub rate_limiter: RateLimiterConfig,
     /// Queue manager configuration for webhook processing
+    #[serde(default)]
     pub queue: QueueConfig,
     /// Metrics configuration
+    #[serde(default)]
     pub metrics: MetricsConfig,
 
     /// SSL/TLS configuration
+    #[serde(default)]
     pub ssl: SslConfig,
     /// CORS configuration
+    #[serde(default)]
     pub cors: CorsConfig,
     /// Channel limits (name length, cache TTL)
+    #[serde(default)]
     pub channel_limits: ChannelLimits,
     /// Event limits (payload size, batch size, etc.)
+    #[serde(default)]
     pub event_limits: EventLimits,
     /// Presence channel limits
+    #[serde(default)]
     pub presence: PresenceLimits,
     /// HTTP API configuration
+    #[serde(default)]
     pub http_api: HttpApiConfig,
     /// Webhook configuration
+    #[serde(default)]
     pub webhooks: WebhookConfig,
     /// User authentication timeout in milliseconds (default: 30000)
     pub user_authentication_timeout_ms: u64,
@@ -139,10 +152,13 @@ pub struct AdapterConfig {
     /// Adapter driver to use
     pub driver: AdapterDriver,
     /// Redis adapter configuration
+    #[serde(default)]
     pub redis: RedisAdapterConfig,
     /// Cluster adapter configuration
+    #[serde(default)]
     pub cluster: ClusterAdapterConfig,
     /// NATS adapter configuration
+    #[serde(default)]
     pub nats: NatsAdapterConfig,
 }
 
@@ -296,10 +312,15 @@ impl Default for NatsAdapterConfig {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AppManagerConfig {
     pub driver: AppManagerDriver,
+    #[serde(default)]
     pub array: ArrayAppManagerConfig,
+    #[serde(default)]
     pub dynamodb: DynamoDbAppManagerConfig,
+    #[serde(default)]
     pub mysql: MysqlAppManagerConfig,
+    #[serde(default)]
     pub postgres: PostgresAppManagerConfig,
+    #[serde(default)]
     pub cache: AppManagerCacheConfig,
 }
 
@@ -415,6 +436,7 @@ impl Default for AppManagerCacheConfig {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CacheConfig {
     pub driver: CacheDriver,
+    #[serde(default)]
     pub redis: RedisCacheConfig,
 }
 
@@ -460,6 +482,7 @@ impl Default for RedisCacheConfig {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RateLimiterConfig {
     pub driver: RateLimiterDriver,
+    #[serde(default)]
     pub redis: RedisRateLimiterConfig,
 }
 
@@ -506,7 +529,9 @@ impl Default for RedisRateLimiterConfig {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct QueueConfig {
     pub driver: QueueDriver,
+    #[serde(default)]
     pub redis: RedisQueueConfig,
+    #[serde(default)]
     pub sqs: SqsQueueConfig,
 }
 
