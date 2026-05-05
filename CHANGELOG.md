@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.6](https://github.com/ferdiunal/soketi.rs/compare/v1.2.5...v1.2.6) (2026-05-05)
+
+### 🐛 Bug Fixes
+
+* **config:** add struct-level serde(default) to all config structs ([44166a9](https://github.com/ferdiunal/soketi.rs/commit/44166a944b26f72e2df00c82f01c0cb2f2dc28a9))
+
 ## [1.2.5](https://github.com/ferdiunal/soketi.rs/compare/v1.2.4...v1.2.5) (2026-05-05)
 
 ### 🐛 Bug Fixes
