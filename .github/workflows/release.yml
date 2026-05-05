@@ -148,15 +148,15 @@ jobs:
           toolchain: stable
           target: ${{ matrix.target }}
 
-      - name: Install cross (Linux musl)
+      - name: Install cargo-zigbuild (Linux musl)
         if: matrix.use_cross == true
-        uses: taiki-e/install-action@v2
-        with:
-          tool: cross
+        run: |
+          pip3 install ziglang
+          cargo install cargo-zigbuild --locked
 
-      - name: Build (cross - Linux musl)
+      - name: Build (cargo-zigbuild - Linux musl)
         if: matrix.use_cross == true
-        run: cross build --release --target ${{ matrix.target }} --locked
+        run: cargo zigbuild --release --target ${{ matrix.target }} --locked
 
       - name: Build (native)
         if: matrix.use_cross == false

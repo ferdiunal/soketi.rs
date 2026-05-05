@@ -3040,6 +3040,7 @@ dependencies = [
  "futures",
  "hex",
  "hmac",
+ "libsqlite3-sys",
  "md5",
  "prometheus",
  "redis",
