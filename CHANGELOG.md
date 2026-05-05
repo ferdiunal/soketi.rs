@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1](https://github.com/ferdiunal/soketi.rs/compare/v1.2.0...v1.2.1) (2026-05-05)
+
+### 🐛 Bug Fixes
+
+* **ci:** use DOCKER_HUB_TOKEN secret name for Docker Hub login ([a0f58e9](https://github.com/ferdiunal/soketi.rs/commit/a0f58e904d5b38782c8e8ffb95e5f2b1aca4fe0b))
+
 ## [1.2.0](https://github.com/ferdiunal/soketi.rs/compare/v1.1.1...v1.2.0) (2026-05-05)
 
 ### ✨ Features
