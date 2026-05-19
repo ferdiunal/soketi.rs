@@ -217,6 +217,14 @@ fn test_generate_md5_hash() {
 }
 
 #[test]
+fn test_generate_md5_hash_bytes_matches_string_helper() {
+    let body = br#"{"name":"event","data":{"ok":true}}"#;
+    let body_as_str = std::str::from_utf8(body).unwrap();
+
+    assert_eq!(generate_md5_hash_bytes(body), generate_md5_hash(body_as_str));
+}
+
+#[test]
 fn test_md5_hash_consistency() {
     let hash1 = generate_md5_hash("test data");
     let hash2 = generate_md5_hash("test data");

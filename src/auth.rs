@@ -172,7 +172,20 @@ pub fn verify_user_auth(auth: &str, app_secret: &str, socket_id: &str, user_data
 /// # Returns
 /// The hex-encoded MD5 hash
 pub fn generate_md5_hash(data: &str) -> String {
-    let digest = md5::compute(data.as_bytes());
+    generate_md5_hash_bytes(data.as_bytes())
+}
+
+/// Generate MD5 hash of raw bytes
+///
+/// Used for HTTP API request body hashing before JSON parsing.
+///
+/// # Arguments
+/// * `data` - The raw request body bytes to hash
+///
+/// # Returns
+/// The hex-encoded MD5 hash
+pub fn generate_md5_hash_bytes(data: &[u8]) -> String {
+    let digest = md5::compute(data);
     format!("{:x}", digest)
 }
 

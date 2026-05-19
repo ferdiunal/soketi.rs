@@ -1,5 +1,11 @@
-use crate::{app::App, auth::verify_api_auth_with_timestamp, state::AppState};
+use crate::{
+    app::App,
+    auth::{generate_md5_hash_bytes, verify_api_auth_with_timestamp},
+    state::AppState,
+    validation::max_request_size_bytes,
+};
 use axum::{
+    body::{Body, to_bytes},
     Json,
     extract::{Request, State},
     http::{Method, StatusCode},
@@ -156,7 +162,7 @@ pub async fn app_lookup_middleware(
 ///
 /// Requirements: 3.12, 8.4
 pub async fn auth_middleware(
-    State(_state): State<Arc<AppState>>,
+    State(state): State<Arc<AppState>>,
     request: Request,
     next: Next,
 ) -> Result<Response, Response> {
@@ -198,11 +204,12 @@ pub async fn auth_middleware(
             .into_response());
     }
 
-    let auth_key = auth_params.auth_key.unwrap();
-    let auth_signature = auth_params.auth_signature.unwrap();
+    let auth_key = auth_params.auth_key.as_deref().unwrap();
+    let auth_signature = auth_params.auth_signature.as_deref().unwrap().to_string();
+    let expected_body_md5 = auth_params.body_md5.clone();
 
     // Verify the auth key matches the app key
-    if auth_key != app.key {
+    if auth_key != app.key.as_str() {
         return Err((
             StatusCode::UNAUTHORIZED,
             Json(json!({
@@ -224,7 +231,49 @@ pub async fn auth_middleware(
         &query_without_signature,
     ) {
         Ok(true) => {
-            // Signature is valid, continue
+            let request = if route_requires_body_md5(&method, &path) {
+                let expected_body_md5 = match expected_body_md5 {
+                    Some(value) => value,
+                    None => {
+                        return Err((
+                            StatusCode::UNAUTHORIZED,
+                            Json(json!({
+                                "error": "Missing body_md5 authentication parameter"
+                            })),
+                        )
+                            .into_response());
+                    }
+                };
+
+                let (parts, body) = request.into_parts();
+                let bytes = match to_bytes(body, max_request_size_bytes(&state.config)).await {
+                    Ok(bytes) => bytes,
+                    Err(e) => {
+                        return Err((
+                            StatusCode::PAYLOAD_TOO_LARGE,
+                            Json(json!({
+                                "error": format!("Request body exceeds configured limit or could not be read: {}", e)
+                            })),
+                        )
+                            .into_response());
+                    }
+                };
+
+                if !request_body_md5_matches(&bytes, &expected_body_md5) {
+                    return Err((
+                        StatusCode::UNAUTHORIZED,
+                        Json(json!({
+                            "error": "Invalid body_md5"
+                        })),
+                    )
+                        .into_response());
+                }
+
+                Request::from_parts(parts, Body::from(bytes))
+            } else {
+                request
+            };
+
             Ok(next.run(request).await)
         }
         Ok(false) => Err((
@@ -352,6 +401,7 @@ struct AuthParams {
     auth_timestamp: Option<String>,
     auth_version: Option<String>,
     auth_signature: Option<String>,
+    body_md5: Option<String>,
 }
 
 fn parse_auth_params(query: &str) -> AuthParams {
@@ -360,6 +410,7 @@ fn parse_auth_params(query: &str) -> AuthParams {
         auth_timestamp: None,
         auth_version: None,
         auth_signature: None,
+        body_md5: None,
     };
 
     for param in query.split('&') {
@@ -369,6 +420,7 @@ fn parse_auth_params(query: &str) -> AuthParams {
                 "auth_timestamp" => params.auth_timestamp = Some(value.to_string()),
                 "auth_version" => params.auth_version = Some(value.to_string()),
                 "auth_signature" => params.auth_signature = Some(value.to_string()),
+                "body_md5" => params.body_md5 = Some(value.to_string()),
                 _ => {}
             }
         }
@@ -386,6 +438,14 @@ fn remove_auth_signature_from_query(query: &str) -> String {
         .filter(|param| !param.starts_with("auth_signature="))
         .collect::<Vec<_>>()
         .join("&")
+}
+
+fn route_requires_body_md5(method: &str, path: &str) -> bool {
+    method == "POST" && (path.ends_with("/events") || path.ends_with("/batch_events"))
+}
+
+fn request_body_md5_matches(body: &[u8], expected_body_md5: &str) -> bool {
+    generate_md5_hash_bytes(body).eq_ignore_ascii_case(expected_body_md5)
 }
 
 #[cfg(test)]
@@ -415,16 +475,49 @@ mod tests {
         assert_eq!(params.auth_timestamp, Some("123".to_string()));
         assert_eq!(params.auth_version, Some("1.0".to_string()));
         assert_eq!(params.auth_signature, Some("sig".to_string()));
+        assert_eq!(params.body_md5, None);
+    }
+
+    #[test]
+    fn test_parse_body_md5_auth_param() {
+        let query = "auth_key=key&auth_timestamp=123&auth_version=1.0&body_md5=abc123&auth_signature=sig";
+        let params = parse_auth_params(query);
+
+        assert_eq!(params.body_md5, Some("abc123".to_string()));
     }
 
     #[test]
     fn test_remove_auth_signature_from_query() {
-        let query = "auth_key=key&auth_timestamp=123&auth_signature=sig&auth_version=1.0";
+        let query =
+            "auth_key=key&auth_timestamp=123&body_md5=abc123&auth_signature=sig&auth_version=1.0";
         let result = remove_auth_signature_from_query(query);
 
         assert!(!result.contains("auth_signature"));
         assert!(result.contains("auth_key=key"));
         assert!(result.contains("auth_timestamp=123"));
         assert!(result.contains("auth_version=1.0"));
+        assert!(result.contains("body_md5=abc123"));
+    }
+
+    #[test]
+    fn event_post_routes_require_body_md5() {
+        assert!(route_requires_body_md5("POST", "/apps/123/events"));
+        assert!(route_requires_body_md5("POST", "/apps/123/batch_events"));
+        assert!(route_requires_body_md5("POST", "/pusher/apps/123/events"));
+        assert!(!route_requires_body_md5("GET", "/apps/123/events"));
+        assert!(!route_requires_body_md5(
+            "POST",
+            "/apps/123/users/user-1/terminate_connections"
+        ));
+    }
+
+    #[test]
+    fn request_body_md5_matches_raw_bytes() {
+        let body = br#"{"name":"event","data":{"ok":true}}"#;
+        let hash = generate_md5_hash_bytes(body);
+
+        assert!(request_body_md5_matches(body, &hash));
+        assert!(request_body_md5_matches(body, &hash.to_uppercase()));
+        assert!(!request_body_md5_matches(body, "00000000000000000000000000000000"));
     }
 }

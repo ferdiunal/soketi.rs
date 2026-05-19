@@ -3,6 +3,17 @@ use crate::config::ServerConfig;
 use crate::error::{PusherError, Result};
 use serde_json::Value;
 
+/// Convert configured HTTP API request size from KB to bytes.
+pub fn max_request_size_bytes(config: &ServerConfig) -> usize {
+    let max_kb = config.http_api.max_request_size_in_kb;
+
+    if !max_kb.is_finite() || max_kb <= 0.0 {
+        return 0;
+    }
+
+    (max_kb * 1024.0).ceil().min(usize::MAX as f64) as usize
+}
+
 /// Validates channel name length against configured limits
 ///
 /// Checks both app-specific and global limits. App-specific limits take precedence.
