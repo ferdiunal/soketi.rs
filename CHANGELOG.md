@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.7](https://github.com/ferdiunal/soketi.rs/compare/v1.2.6...v1.2.7) (2026-05-19)
+
+### 🐛 Bug Fixes
+
+* bind api signatures to request bodies ([172fb47](https://github.com/ferdiunal/soketi.rs/commit/172fb47f91ebec0de4005b23453572944bca927d))
+* clean websocket state on all close paths ([04472e2](https://github.com/ferdiunal/soketi.rs/commit/04472e27a968286b4abe488d124a082ebd8e6128))
+* enforce configured api body limits ([31d98fa](https://github.com/ferdiunal/soketi.rs/commit/31d98fa82fe21724b159261e2d93bb846d4b042d))
+* enforce websocket app policies ([c29b3b5](https://github.com/ferdiunal/soketi.rs/commit/c29b3b53d77ce2f018a6dd73c6ea4f329ad26319))
+
 ## [1.2.6](https://github.com/ferdiunal/soketi.rs/compare/v1.2.5...v1.2.6) (2026-05-05)
 
 ### 🐛 Bug Fixes
