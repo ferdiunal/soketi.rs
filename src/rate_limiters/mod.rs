@@ -51,6 +51,21 @@ pub trait RateLimiter: Send + Sync {
         socket_id: &str,
     ) -> Result<RateLimitResponse>;
 
+    /// Consume points for frontend events when callers only need the allow/deny decision.
+    ///
+    /// Implementations can override this to avoid allocating rate-limit headers on hot paths.
+    async fn consume_frontend_event_points_fast(
+        &self,
+        points: u64,
+        app: &App,
+        socket_id: &str,
+    ) -> Result<bool> {
+        Ok(self
+            .consume_frontend_event_points(points, app, socket_id)
+            .await?
+            .can_continue)
+    }
+
     /// Consume points for read requests (HTTP API channel queries)
     ///
     /// # Arguments

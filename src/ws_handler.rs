@@ -17,8 +17,31 @@ use futures::{SinkExt, StreamExt};
 use std::sync::Arc;
 use tokio::sync::mpsc;
 use tokio::time::Duration;
-use tracing::{error, info, warn};
+use tracing::{error, info, trace, warn};
 use uuid::Uuid;
+
+const SOCKET_SEND_BUFFER: usize = 100;
+
+struct JsonByteCounter {
+    len: usize,
+}
+
+impl std::io::Write for JsonByteCounter {
+    fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
+        self.len += buf.len();
+        Ok(buf.len())
+    }
+
+    fn flush(&mut self) -> std::io::Result<()> {
+        Ok(())
+    }
+}
+
+fn json_encoded_len(value: &serde_json::Value) -> serde_json::Result<usize> {
+    let mut counter = JsonByteCounter { len: 0 };
+    serde_json::to_writer(&mut counter, value)?;
+    Ok(counter.len)
+}
 
 pub async fn ws_handler(
     ws: WebSocketUpgrade,
@@ -26,7 +49,9 @@ pub async fn ws_handler(
     State(state): State<Arc<AppState>>,
 ) -> impl IntoResponse {
     ws.on_upgrade(move |socket| async move {
-        WsHandler::new(state).handle_connection(socket, app_key).await;
+        WsHandler::new(state)
+            .handle_connection(socket, app_key)
+            .await;
     })
 }
 
@@ -192,7 +217,7 @@ impl WsHandler {
         info!("Connection established for socket: {}", socket_id);
 
         // Create a channel for sending messages to the client
-        let (tx, mut rx) = mpsc::channel::<Message>(100);
+        let (tx, mut rx) = mpsc::channel::<Message>(SOCKET_SEND_BUFFER);
 
         // Step 6: Add socket to adapter
         let socket_info = Socket {
@@ -258,7 +283,7 @@ impl WsHandler {
             while let Some(msg_result) = ws_receiver.next().await {
                 match msg_result {
                     Ok(Message::Text(text)) => {
-                        info!("Received message from {}: {}", socket_id_clone, text);
+                        trace!("Received message from {}: {}", socket_id_clone, text);
 
                         // Parse the Pusher protocol message
                         match serde_json::from_str::<PusherMessage>(&text) {
@@ -308,7 +333,6 @@ impl WsHandler {
                     }
                 }
             }
-
         });
 
         // Wait for either task to complete
@@ -378,14 +402,13 @@ impl WsHandler {
                 }
 
                 if let Some(uid) = user_id {
-                    let member_removed_msg =
-                        crate::pusher::PusherMessage::new(
-                            "pusher_internal:member_removed".to_string(),
-                        )
-                        .with_channel(channel.clone())
-                        .with_data(serde_json::json!({
-                            "user_id": uid
-                        }));
+                    let member_removed_msg = crate::pusher::PusherMessage::new(
+                        "pusher_internal:member_removed".to_string(),
+                    )
+                    .with_channel(channel.clone())
+                    .with_data(serde_json::json!({
+                        "user_id": uid
+                    }));
 
                     if let Ok(json) = serde_json::to_string(&member_removed_msg) {
                         let _ = adapter.send(app_id, channel, &json, Some(socket_id)).await;
@@ -474,7 +497,7 @@ impl WsHandler {
         sender: &mpsc::Sender<Message>,
         message: PusherMessage,
     ) -> Result<()> {
-        info!(
+        trace!(
             "Routing message: event={}, channel={:?}",
             message.event, message.channel
         );
@@ -858,7 +881,7 @@ impl WsHandler {
         _sender: &mpsc::Sender<Message>,
         message: PusherMessage,
     ) -> Result<()> {
-        info!(
+        trace!(
             "Handling client event from socket: {} event: {} channel: {:?}",
             socket_id, message.event, message.channel
         );
@@ -899,9 +922,8 @@ impl WsHandler {
         // Step 4: Validate payload size
         // Requirements: 15.5
         if let Some(data) = &message.data {
-            let payload_str = serde_json::to_string(data)?;
             let max_payload_kb = app.max_event_payload_in_kb.unwrap_or(100.0);
-            let payload_size_kb = payload_str.len() as f64 / 1024.0;
+            let payload_size_kb = json_encoded_len(data)? as f64 / 1024.0;
 
             if payload_size_kb > max_payload_kb {
                 error!(
@@ -934,12 +956,12 @@ impl WsHandler {
 
         // Step 6: Check rate limits
         // Requirements: 2.5
-        let rate_limit_response = state
+        let can_continue = state
             .rate_limiter
-            .consume_frontend_event_points(1, app, socket_id)
+            .consume_frontend_event_points_fast(1, app, socket_id)
             .await?;
 
-        if !rate_limit_response.can_continue {
+        if !can_continue {
             error!("Rate limit exceeded for socket: {}", socket_id);
             return Err(PusherError::RateLimitExceeded);
         }
@@ -982,7 +1004,7 @@ impl WsHandler {
 
         let broadcast_msg = crate::pusher::PusherMessage {
             event: message.event.clone(),
-            data: broadcast_data.clone(),
+            data: broadcast_data,
             channel: Some(channel.clone()),
         };
 
@@ -995,7 +1017,7 @@ impl WsHandler {
             .send(&app.id, &channel, &json, Some(socket_id))
             .await?;
 
-        info!(
+        trace!(
             "Client event broadcast to channel: {} from socket: {}",
             channel, socket_id
         );

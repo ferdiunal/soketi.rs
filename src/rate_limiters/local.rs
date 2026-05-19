@@ -4,7 +4,7 @@ use crate::rate_limiters::{RateLimitResponse, RateLimiter};
 use async_trait::async_trait;
 use dashmap::DashMap;
 use std::collections::HashMap;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 use std::time::Instant;
 
 #[derive(Clone)]
@@ -14,7 +14,7 @@ struct Bucket {
 }
 
 pub struct LocalRateLimiter {
-    buckets: Arc<DashMap<String, Mutex<Bucket>>>,
+    buckets: Arc<DashMap<String, Bucket>>,
 }
 
 impl Default for LocalRateLimiter {
@@ -38,37 +38,34 @@ impl LocalRateLimiter {
             };
         }
 
-        let bucket = self.buckets.entry(key).or_insert_with(|| {
-            Mutex::new(Bucket {
-                tokens: limit as f64,
-                last_update: Instant::now(),
-            })
+        let mut bucket = self.buckets.entry(key).or_insert_with(|| Bucket {
+            tokens: limit as f64,
+            last_update: Instant::now(),
         });
 
-        let mut b = bucket.lock().unwrap();
         let now = Instant::now();
-        let elapsed = now.duration_since(b.last_update).as_secs_f64();
+        let elapsed = now.duration_since(bucket.last_update).as_secs_f64();
 
         let capacity = limit as f64;
         let refill_rate = limit as f64;
 
-        b.tokens = (b.tokens + elapsed * refill_rate).min(capacity);
-        b.last_update = now;
+        bucket.tokens = (bucket.tokens + elapsed * refill_rate).min(capacity);
+        bucket.last_update = now;
 
         let cost = points as f64;
-        let can_continue = b.tokens >= cost;
+        let can_continue = bucket.tokens >= cost;
 
         if can_continue {
-            b.tokens -= cost;
+            bucket.tokens -= cost;
         }
 
-        let remaining = b.tokens.max(0.0) as u64;
+        let remaining = bucket.tokens.max(0.0) as u64;
 
         let mut headers = HashMap::new();
         headers.insert("X-RateLimit-Limit".to_string(), limit.to_string());
         headers.insert("X-RateLimit-Remaining".to_string(), remaining.to_string());
         if !can_continue {
-            let deficit = cost - b.tokens;
+            let deficit = cost - bucket.tokens;
             let retry_after = ((deficit / refill_rate).ceil()) as u64;
             headers.insert("Retry-After".to_string(), retry_after.to_string());
         }
@@ -77,6 +74,35 @@ impl LocalRateLimiter {
             can_continue,
             headers,
         }
+    }
+
+    fn consume_fast(&self, key: String, points: u64, limit: u64) -> bool {
+        if limit == 0 {
+            return true;
+        }
+
+        let mut bucket = self.buckets.entry(key).or_insert_with(|| Bucket {
+            tokens: limit as f64,
+            last_update: Instant::now(),
+        });
+
+        let now = Instant::now();
+        let elapsed = now.duration_since(bucket.last_update).as_secs_f64();
+
+        let capacity = limit as f64;
+        let refill_rate = limit as f64;
+
+        bucket.tokens = (bucket.tokens + elapsed * refill_rate).min(capacity);
+        bucket.last_update = now;
+
+        let cost = points as f64;
+        let can_continue = bucket.tokens >= cost;
+
+        if can_continue {
+            bucket.tokens -= cost;
+        }
+
+        can_continue
     }
 }
 
@@ -111,6 +137,20 @@ impl RateLimiter for LocalRateLimiter {
                 can_continue: true,
                 headers: HashMap::new(),
             })
+        }
+    }
+
+    async fn consume_frontend_event_points_fast(
+        &self,
+        points: u64,
+        app: &App,
+        socket_id: &str,
+    ) -> Result<bool> {
+        if let Some(limit) = app.max_client_events_per_second {
+            let key = format!("{}:frontend:events:{}", app.id, socket_id);
+            Ok(self.consume_fast(key, points, limit))
+        } else {
+            Ok(true)
         }
     }
 
@@ -220,6 +260,38 @@ mod tests {
             .await
             .unwrap();
         assert!(res.can_continue);
+    }
+
+    #[tokio::test]
+    async fn test_rate_limiter_frontend_fast_path_matches_limit_behavior() {
+        let limiter = LocalRateLimiter::new();
+        let mut app = App::new("id".to_string(), "key".to_string(), "secret".to_string());
+        app.max_client_events_per_second = Some(2);
+
+        assert!(
+            limiter
+                .consume_frontend_event_points_fast(1, &app, "socket1")
+                .await
+                .unwrap()
+        );
+        assert!(
+            limiter
+                .consume_frontend_event_points_fast(1, &app, "socket1")
+                .await
+                .unwrap()
+        );
+        assert!(
+            !limiter
+                .consume_frontend_event_points_fast(1, &app, "socket1")
+                .await
+                .unwrap()
+        );
+        assert!(
+            limiter
+                .consume_frontend_event_points_fast(1, &app, "socket2")
+                .await
+                .unwrap()
+        );
     }
 
     #[tokio::test]
