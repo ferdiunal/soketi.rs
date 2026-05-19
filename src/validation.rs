@@ -374,6 +374,25 @@ mod tests {
     }
 
     #[test]
+    fn test_max_request_size_bytes_uses_configured_http_limit() {
+        let mut config = create_test_config();
+        config.http_api.max_request_size_in_kb = 1.5;
+
+        assert_eq!(max_request_size_bytes(&config), 1536);
+    }
+
+    #[test]
+    fn test_max_request_size_bytes_rejects_invalid_limits() {
+        let mut config = create_test_config();
+        config.http_api.max_request_size_in_kb = 0.0;
+
+        assert_eq!(max_request_size_bytes(&config), 0);
+
+        config.http_api.max_request_size_in_kb = f64::NAN;
+        assert_eq!(max_request_size_bytes(&config), 0);
+    }
+
+    #[test]
     fn test_validate_channel_name_length_success() {
         let config = create_test_config();
         let result = validate_channel_name_length("test-channel", None, &config);

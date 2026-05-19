@@ -54,10 +54,9 @@ pub async fn trigger_event(
     Path(_app_id): Path<String>,
     request: Request,
 ) -> impl IntoResponse {
-    use crate::config::ServerConfig;
     use crate::validation::{
-        validate_channel_count, validate_channel_name_length, validate_event_name_length,
-        validate_payload_size,
+        max_request_size_bytes, validate_channel_count, validate_channel_name_length,
+        validate_event_name_length, validate_payload_size,
     };
 
     // Get the authenticated app from middleware
@@ -74,12 +73,12 @@ pub async fn trigger_event(
 
     // Extract the JSON payload
     let (_parts, body) = request.into_parts();
-    let bytes = match axum::body::to_bytes(body, usize::MAX).await {
+    let bytes = match axum::body::to_bytes(body, max_request_size_bytes(&state.config)).await {
         Ok(b) => b,
         Err(e) => {
             return (
-                StatusCode::BAD_REQUEST,
-                JsonResponse(serde_json::json!({"error": format!("Failed to read body: {}", e)})),
+                StatusCode::PAYLOAD_TOO_LARGE,
+                JsonResponse(serde_json::json!({"error": format!("Request body exceeds configured limit or could not be read: {}", e)})),
             )
                 .into_response();
         }
@@ -96,12 +95,10 @@ pub async fn trigger_event(
         }
     };
 
-    // Create a default ServerConfig for validation
-    // In a real implementation, this would come from the state
-    let config = ServerConfig::default();
+    let config = &state.config;
 
     // Validate event name length
-    if let Err(e) = validate_event_name_length(&payload.name, Some(&app), &config) {
+    if let Err(e) = validate_event_name_length(&payload.name, Some(&app), config) {
         let err_msg = format!("{}", e);
         return (
             StatusCode::BAD_REQUEST,
@@ -117,7 +114,7 @@ pub async fn trigger_event(
         other => other.to_string(),
     };
 
-    if let Err(e) = validate_payload_size(&data_str, Some(&app), &config) {
+    if let Err(e) = validate_payload_size(&data_str, Some(&app), config) {
         let err_msg = format!("{}", e);
         return (
             StatusCode::BAD_REQUEST,
@@ -142,7 +139,7 @@ pub async fn trigger_event(
     }
 
     // Validate channel count
-    if let Err(e) = validate_channel_count(channels.len(), Some(&app), &config) {
+    if let Err(e) = validate_channel_count(channels.len(), Some(&app), config) {
         let err_msg = format!("{}", e);
         return (
             StatusCode::BAD_REQUEST,
@@ -153,7 +150,7 @@ pub async fn trigger_event(
 
     // Validate each channel name length
     for channel in &channels {
-        if let Err(e) = validate_channel_name_length(channel, Some(&app), &config) {
+        if let Err(e) = validate_channel_name_length(channel, Some(&app), config) {
             let err_msg = format!("{}", e);
             return (
                 StatusCode::BAD_REQUEST,
@@ -516,10 +513,9 @@ pub async fn batch_events(
     Path(_app_id): Path<String>,
     request: Request,
 ) -> impl IntoResponse {
-    use crate::config::ServerConfig;
     use crate::validation::{
-        validate_batch_size, validate_channel_count, validate_channel_name_length,
-        validate_event_name_length, validate_payload_size,
+        max_request_size_bytes, validate_batch_size, validate_channel_count,
+        validate_channel_name_length, validate_event_name_length, validate_payload_size,
     };
 
     // Get the authenticated app from middleware
@@ -536,12 +532,12 @@ pub async fn batch_events(
 
     // Extract the JSON payload
     let (_parts, body) = request.into_parts();
-    let bytes = match axum::body::to_bytes(body, usize::MAX).await {
+    let bytes = match axum::body::to_bytes(body, max_request_size_bytes(&state.config)).await {
         Ok(b) => b,
         Err(e) => {
             return (
-                StatusCode::BAD_REQUEST,
-                JsonResponse(serde_json::json!({"error": format!("Failed to read body: {}", e)})),
+                StatusCode::PAYLOAD_TOO_LARGE,
+                JsonResponse(serde_json::json!({"error": format!("Request body exceeds configured limit or could not be read: {}", e)})),
             )
                 .into_response();
         }
@@ -558,11 +554,10 @@ pub async fn batch_events(
         }
     };
 
-    // Create a default ServerConfig for validation
-    let config = ServerConfig::default();
+    let config = &state.config;
 
     // Validate batch size
-    if let Err(e) = validate_batch_size(payload.batch.len(), Some(&app), &config) {
+    if let Err(e) = validate_batch_size(payload.batch.len(), Some(&app), config) {
         let err_msg = format!("{}", e);
         return (
             StatusCode::BAD_REQUEST,
@@ -574,7 +569,7 @@ pub async fn batch_events(
     // Validate each event in the batch
     for event in &payload.batch {
         // Validate event name length
-        if let Err(e) = validate_event_name_length(&event.name, Some(&app), &config) {
+        if let Err(e) = validate_event_name_length(&event.name, Some(&app), config) {
             let err_msg = format!("{}", e);
             return (
                 StatusCode::BAD_REQUEST,
@@ -589,7 +584,7 @@ pub async fn batch_events(
             other => other.to_string(),
         };
 
-        if let Err(e) = validate_payload_size(&data_str, Some(&app), &config) {
+        if let Err(e) = validate_payload_size(&data_str, Some(&app), config) {
             let err_msg = format!("{}", e);
             return (
                 StatusCode::BAD_REQUEST,
@@ -614,7 +609,7 @@ pub async fn batch_events(
         }
 
         // Validate channel count
-        if let Err(e) = validate_channel_count(channels.len(), Some(&app), &config) {
+        if let Err(e) = validate_channel_count(channels.len(), Some(&app), config) {
             let err_msg = format!("{}", e);
             return (
                 StatusCode::BAD_REQUEST,
@@ -625,7 +620,7 @@ pub async fn batch_events(
 
         // Validate each channel name length
         for channel in &channels {
-            if let Err(e) = validate_channel_name_length(channel, Some(&app), &config) {
+            if let Err(e) = validate_channel_name_length(channel, Some(&app), config) {
                 let err_msg = format!("{}", e);
                 return (
                     StatusCode::BAD_REQUEST,
