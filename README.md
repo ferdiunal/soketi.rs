@@ -5,8 +5,8 @@
 [![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)](https://www.rust-lang.org/)
 [![Crates.io](https://img.shields.io/crates/v/soketi-rs.svg)](https://crates.io/crates/soketi-rs)
 [![Documentation](https://docs.rs/soketi-rs/badge.svg)](https://docs.rs/soketi-rs)
-[![Build Durumu](https://img.shields.io/github/actions/workflow/status/ferdiunal/soketi-rs/release.yml?branch=main)]actions)
-[![Versiyon](https://img.shields.io/github/v/release/ferdiunal/soketi-rs)]releases)
+[![Build Durumu](https://img.shields.io/github/actions/workflow/status/ferdiunal/soketi.rs/release.yml?branch=main)](https://github.com/ferdiunal/soketi.rs/actions/workflows/release.yml)
+[![Versiyon](https://img.shields.io/github/v/release/ferdiunal/soketi.rs)](https://github.com/ferdiunal/soketi.rs/releases)
 [![Lisans](https://img.shields.io/badge/lisans-GPL--3.0-blue.svg)](LICENSE)
 [![Docker](https://img.shields.io/docker/pulls/funal/soketi-rs)](https://hub.docker.com/r/funal/soketi-rs)
 [![Docker İmaj Boyutu](https://img.shields.io/docker/image-size/funal/soketi-rs/latest)](https://hub.docker.com/r/funal/soketi-rs)
@@ -582,8 +582,29 @@ cargo test test_name
 # Loglama ile çalıştır
 RUST_LOG=debug cargo test
 
-# Benchmark'ları çalıştır
-cargo bench
+# Local E2E benchmark'ları çalıştır
+cargo bench --bench local_e2e
+
+# Hızlı lokal iterasyon için daha az örnekle çalıştır
+cargo bench --bench local_e2e -- --sample-size 10
+
+# Stabil baseline al
+SOKETI_BENCH_REPORT=target/benchmarks/baseline-local_e2e.json \
+  cargo bench --bench local_e2e -- --sample-size 30 --measurement-time 10 --warm-up-time 3
+
+# Optimizasyon sonrası yeni sonucu ayrı dosyaya yaz
+SOKETI_BENCH_REPORT=target/benchmarks/current-local_e2e.json \
+  cargo bench --bench local_e2e -- --sample-size 30 --measurement-time 10 --warm-up-time 3
+
+# Baseline'a göre %10'dan fazla regresyon varsa hata döndür
+cargo run --example compare_benchmarks -- \
+  target/benchmarks/baseline-local_e2e.json \
+  target/benchmarks/current-local_e2e.json \
+  --threshold-percent 10 \
+  --fail
+
+# Uzun süren eski performans smoke testlerini çalıştır
+cargo test --test performance_test -- --ignored --nocapture
 ```
 
 ## 🤝 Katkıda Bulunma

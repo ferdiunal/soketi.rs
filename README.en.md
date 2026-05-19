@@ -5,8 +5,8 @@
 [![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)](https://www.rust-lang.org/)
 [![Crates.io](https://img.shields.io/crates/v/soketi-rs.svg)](https://crates.io/crates/soketi-rs)
 [![Documentation](https://docs.rs/soketi-rs/badge.svg)](https://docs.rs/soketi-rs)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/ferdiunal/soketi-rs/release.yml?branch=main)]actions)
-[![Version](https://img.shields.io/github/v/release/ferdiunal/soketi-rs)]releases)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/ferdiunal/soketi.rs/release.yml?branch=main)](https://github.com/ferdiunal/soketi.rs/actions/workflows/release.yml)
+[![Version](https://img.shields.io/github/v/release/ferdiunal/soketi.rs)](https://github.com/ferdiunal/soketi.rs/releases)
 [![License](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
 [![Docker](https://img.shields.io/docker/pulls/funal/soketi-rs)](https://hub.docker.com/r/funal/soketi-rs)
 [![Docker Image Size](https://img.shields.io/docker/image-size/funal/soketi-rs/latest)](https://hub.docker.com/r/funal/soketi-rs)
@@ -582,8 +582,29 @@ cargo test test_name
 # Run with logging
 RUST_LOG=debug cargo test
 
-# Run benchmarks
-cargo bench
+# Run Local E2E benchmarks
+cargo bench --bench local_e2e
+
+# Run fewer samples for fast local iteration
+cargo bench --bench local_e2e -- --sample-size 10
+
+# Capture a stable baseline
+SOKETI_BENCH_REPORT=target/benchmarks/baseline-local_e2e.json \
+  cargo bench --bench local_e2e -- --sample-size 30 --measurement-time 10 --warm-up-time 3
+
+# Write the post-optimization result to a separate file
+SOKETI_BENCH_REPORT=target/benchmarks/current-local_e2e.json \
+  cargo bench --bench local_e2e -- --sample-size 30 --measurement-time 10 --warm-up-time 3
+
+# Fail when a scenario regresses by more than 10% from baseline
+cargo run --example compare_benchmarks -- \
+  target/benchmarks/baseline-local_e2e.json \
+  target/benchmarks/current-local_e2e.json \
+  --threshold-percent 10 \
+  --fail
+
+# Run the older long-running performance smoke tests
+cargo test --test performance_test -- --ignored --nocapture
 ```
 
 ## 🤝 Contributing

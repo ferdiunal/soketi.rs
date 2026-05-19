@@ -66,7 +66,13 @@ tower = "0.5"
 chrono = "0.4"
 tempfile = "3.8"
 tokio-tungstenite = "0.24"
+criterion = { version = "0.8.2", features = ["async_tokio", "html_reports"] }
+hdrhistogram = "7.5.4"
 
 [[bin]]
 name = "soketi-rs"
 path = "src/main.rs"
+
+[[bench]]
+name = "local_e2e"
+harness = false
