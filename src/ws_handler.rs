@@ -250,9 +250,7 @@ impl WsHandler {
 
         // Main message receiving loop
         let socket_id_clone = socket_id.clone();
-        let app_id_clone = app.id.clone();
         let app_clone = app.clone();
-        let adapter_clone = self.state.adapter.clone();
         let tx_clone = tx.clone();
         let state_clone = self.state.clone();
 
@@ -311,121 +309,6 @@ impl WsHandler {
                 }
             }
 
-            // Connection close handling - Requirements: 2.7
-            // This cleanup is performed when the connection is closed for any reason:
-            // - Client initiated close
-            // - Server error
-            // - Network error
-            info!(
-                "Connection closed, performing cleanup for socket: {}",
-                socket_id_clone
-            );
-
-            // Step 1: Get all channels the socket is subscribed to
-            // We need to unsubscribe from all channels and handle presence channel cleanup
-            let channels_to_cleanup = if let Some(ns) = adapter_clone.get_namespace(&app_id_clone) {
-                // Find all channels this socket is subscribed to
-                ns.channels
-                    .iter()
-                    .filter(|entry| entry.value().contains(&socket_id_clone))
-                    .map(|entry| entry.key().clone())
-                    .collect::<Vec<String>>()
-            } else {
-                Vec::new()
-            };
-
-            // Step 2: Unsubscribe from all channels (especially presence channels need special handling)
-            for channel in &channels_to_cleanup {
-                if channel.starts_with("presence-") {
-                    // For presence channels, we need to:
-                    // 1. Remove the member from the presence list
-                    // 2. Broadcast member_removed event to other subscribers
-                    info!(
-                        "Cleaning up presence channel: {} for socket: {}",
-                        channel, socket_id_clone
-                    );
-
-                    // Get the user_id for this socket in this presence channel before removing
-                    let user_id = if let Some(ns) = adapter_clone.get_namespace(&app_id_clone) {
-                        ns.presence_socket_to_user
-                            .get(channel)
-                            .and_then(|socket_to_user| {
-                                socket_to_user
-                                    .get(&socket_id_clone)
-                                    .map(|entry| entry.value().clone())
-                            })
-                    } else {
-                        None
-                    };
-
-                    // Remove member from presence channel
-                    if let Err(e) = adapter_clone
-                        .remove_member(&app_id_clone, channel, &socket_id_clone)
-                        .await
-                    {
-                        error!(
-                            "Error removing member from presence channel {}: {}",
-                            channel, e
-                        );
-                    }
-
-                    // Broadcast member_removed event if we have a user_id
-                    if let Some(uid) = user_id {
-                        let member_removed_msg = crate::pusher::PusherMessage::new(
-                            "pusher_internal:member_removed".to_string(),
-                        )
-                        .with_channel(channel.clone())
-                        .with_data(serde_json::json!({
-                            "user_id": uid
-                        }));
-
-                        if let Ok(json) = serde_json::to_string(&member_removed_msg) {
-                            // Send to all subscribers except the leaving socket
-                            let _ = adapter_clone
-                                .send(&app_id_clone, channel, &json, Some(&socket_id_clone))
-                                .await;
-                        }
-                    }
-                }
-            }
-
-            // Step 3: Check if socket has an authenticated user and remove user association
-            // Get the user_id associated with this socket (if any)
-            let user_id = if let Some(ns) = adapter_clone.get_namespace(&app_id_clone) {
-                // Find user_id by checking which user has this socket
-                ns.users
-                    .iter()
-                    .find(|entry| entry.value().contains(&socket_id_clone))
-                    .map(|entry| entry.key().clone())
-            } else {
-                None
-            };
-
-            // Remove user association if authenticated
-            if let Some(uid) = user_id {
-                info!(
-                    "Removing user association for user: {} socket: {}",
-                    uid, socket_id_clone
-                );
-                if let Err(e) = adapter_clone
-                    .remove_user(&app_id_clone, &uid, &socket_id_clone)
-                    .await
-                {
-                    error!("Error removing user from adapter: {}", e);
-                }
-            }
-
-            // Step 4: Remove socket from adapter
-            // This will also clean up any remaining channel subscriptions
-            info!("Removing socket from adapter: {}", socket_id_clone);
-            if let Err(e) = adapter_clone
-                .remove_socket(&app_id_clone, &socket_id_clone)
-                .await
-            {
-                error!("Error removing socket from adapter: {}", e);
-            }
-
-            info!("Cleanup completed for socket: {}", socket_id_clone);
         });
 
         // Wait for either task to complete
@@ -443,7 +326,99 @@ impl WsHandler {
             handle.abort();
         }
 
+        Self::cleanup_connection(self.state.adapter.clone(), &app.id, &socket_id).await;
+
         info!("Connection closed for socket: {}", socket_id);
+    }
+
+    async fn cleanup_connection(
+        adapter: Arc<dyn crate::adapters::Adapter>,
+        app_id: &str,
+        socket_id: &str,
+    ) {
+        info!(
+            "Connection closed, performing cleanup for socket: {}",
+            socket_id
+        );
+
+        let channels_to_cleanup = if let Some(ns) = adapter.get_namespace(app_id) {
+            ns.channels
+                .iter()
+                .filter(|entry| entry.value().contains(socket_id))
+                .map(|entry| entry.key().clone())
+                .collect::<Vec<String>>()
+        } else {
+            Vec::new()
+        };
+
+        for channel in &channels_to_cleanup {
+            if channel.starts_with("presence-") {
+                info!(
+                    "Cleaning up presence channel: {} for socket: {}",
+                    channel, socket_id
+                );
+
+                let user_id = if let Some(ns) = adapter.get_namespace(app_id) {
+                    ns.presence_socket_to_user
+                        .get(channel)
+                        .and_then(|socket_to_user| {
+                            socket_to_user
+                                .get(socket_id)
+                                .map(|entry| entry.value().clone())
+                        })
+                } else {
+                    None
+                };
+
+                if let Err(e) = adapter.remove_member(app_id, channel, socket_id).await {
+                    error!(
+                        "Error removing member from presence channel {}: {}",
+                        channel, e
+                    );
+                }
+
+                if let Some(uid) = user_id {
+                    let member_removed_msg =
+                        crate::pusher::PusherMessage::new(
+                            "pusher_internal:member_removed".to_string(),
+                        )
+                        .with_channel(channel.clone())
+                        .with_data(serde_json::json!({
+                            "user_id": uid
+                        }));
+
+                    if let Ok(json) = serde_json::to_string(&member_removed_msg) {
+                        let _ = adapter.send(app_id, channel, &json, Some(socket_id)).await;
+                    }
+                }
+            }
+        }
+
+        let user_id = if let Some(ns) = adapter.get_namespace(app_id) {
+            ns.users
+                .iter()
+                .find(|entry| entry.value().contains(socket_id))
+                .map(|entry| entry.key().clone())
+        } else {
+            None
+        };
+
+        if let Some(uid) = user_id {
+            info!(
+                "Removing user association for user: {} socket: {}",
+                uid, socket_id
+            );
+            if let Err(e) = adapter.remove_user(app_id, &uid, socket_id).await {
+                error!("Error removing user from adapter: {}", e);
+            }
+        }
+
+        info!("Removing socket from adapter: {}", socket_id);
+        if let Err(e) = adapter.remove_socket(app_id, socket_id).await {
+            error!("Error removing socket from adapter: {}", e);
+        }
+
+        info!("Cleanup completed for socket: {}", socket_id);
     }
 
     /// Generate a unique Socket_ID in Pusher format
@@ -1313,7 +1288,13 @@ impl WsHandler {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::adapters::Adapter;
+    use crate::adapters::local::LocalAdapter;
+    use crate::app::PresenceMember;
+    use crate::namespace::Socket;
     use serde_json::json;
+    use std::sync::Arc;
+    use tokio::sync::mpsc;
 
     #[test]
     fn extracts_subscribe_channel_from_data_payload() {
@@ -1348,5 +1329,77 @@ mod tests {
         }));
 
         assert_eq!(WsHandler::extract_channel_name(&message), None);
+    }
+
+    #[tokio::test]
+    async fn cleanup_connection_removes_socket_channel_presence_and_user_state() {
+        let adapter: Arc<dyn Adapter> = Arc::new(LocalAdapter::new());
+        let app_id = "app-1";
+        let socket_id = "123.456";
+        let public_channel = "public-chat";
+        let presence_channel = "presence-room";
+
+        let (tx, _rx) = mpsc::channel(1);
+        adapter
+            .add_socket(
+                app_id,
+                Socket {
+                    id: socket_id.to_string(),
+                    sender: tx,
+                },
+            )
+            .await
+            .unwrap();
+        adapter
+            .add_to_channel(app_id, public_channel, socket_id.to_string())
+            .await
+            .unwrap();
+        adapter
+            .add_to_channel(app_id, presence_channel, socket_id.to_string())
+            .await
+            .unwrap();
+        adapter.add_user(app_id, "user-1", socket_id).await.unwrap();
+        adapter
+            .add_member(
+                app_id,
+                presence_channel,
+                socket_id,
+                PresenceMember {
+                    user_id: "user-1".to_string(),
+                    user_info: json!({"name": "Ada"}),
+                },
+            )
+            .await
+            .unwrap();
+
+        WsHandler::cleanup_connection(adapter.clone(), app_id, socket_id).await;
+
+        assert_eq!(adapter.get_sockets_count(app_id).await.unwrap(), 0);
+        assert!(
+            !adapter
+                .is_in_channel(app_id, public_channel, socket_id)
+                .await
+                .unwrap()
+        );
+        assert!(
+            !adapter
+                .is_in_channel(app_id, presence_channel, socket_id)
+                .await
+                .unwrap()
+        );
+        assert!(
+            adapter
+                .get_user_sockets(app_id, "user-1")
+                .await
+                .unwrap()
+                .is_empty()
+        );
+        assert_eq!(
+            adapter
+                .get_channel_members_count(app_id, presence_channel)
+                .await
+                .unwrap(),
+            0
+        );
     }
 }
