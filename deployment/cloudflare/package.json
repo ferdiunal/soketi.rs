@@ -1,0 +1,24 @@
+{
+  "name": "soketi-rs-cloudflare-containers",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "dev:env": "node scripts/render-wrangler.mjs && wrangler dev --config wrangler.generated.jsonc",
+    "deploy": "wrangler deploy",
+    "deploy:env": "node scripts/render-wrangler.mjs && wrangler deploy --config wrangler.generated.jsonc",
+    "deploy:dry-run": "wrangler deploy --dry-run",
+    "deploy:dry-run:env": "node scripts/render-wrangler.mjs && wrangler deploy --dry-run --config wrangler.generated.jsonc",
+    "typecheck": "tsc --noEmit",
+    "containers:list": "wrangler containers list",
+    "containers:images": "wrangler containers images list"
+  },
+  "dependencies": {
+    "@cloudflare/containers": "latest"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "latest",
+    "typescript": "latest",
+    "wrangler": "latest"
+  }
+}

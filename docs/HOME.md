@@ -17,6 +17,7 @@ Welcome to the Soketi.rs documentation! This directory contains comprehensive gu
 - [Docker Deployment](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/docker-deployment.md) - Complete Docker deployment guide
 - [Database Setup](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/database-setup.md) - PostgreSQL, MySQL, and DynamoDB setup
 - [Deployment Guide](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/deployment.md) - Production deployment strategies
+- [Cloudflare Containers](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/deployment/cloudflare-containers.md) - Deploy the Docker Hub image on Cloudflare Containers
 - [Reverse Proxy](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/deployment/reverse-proxy.md) - Nginx and HAProxy configuration
 - [Netlify](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/deployment/netlify.md) - Deploy to Netlify
 - [Vercel](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/deployment/vercel.md) - Deploy to Vercel
@@ -50,6 +51,7 @@ Welcome to the Soketi.rs documentation! This directory contains comprehensive gu
 - [Docker Rehberi](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/docker-rehberi.md) - Hızlı Docker komutları ve kurulum
 - [Docker Deployment](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/docker-deployment.md) - Tam Docker deployment rehberi
 - [Veritabanı Kurulumu](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/veritabani-kurulumu.md) - PostgreSQL, MySQL ve DynamoDB kurulumu
+- [Cloudflare Containers](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/deployment/cloudflare-containers.md) - Cloudflare Containers üzerinde dağıtım
 - [Reverse Proxy](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/deployment/reverse-proxy.md) - Nginx ve HAProxy yapılandırması
 - [Netlify](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/deployment/netlify.md) - Netlify'a deploy
 - [Vercel](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/deployment/vercel.md) - Vercel'e deploy
@@ -74,6 +76,7 @@ Welcome to the Soketi.rs documentation! This directory contains comprehensive gu
 - 🔧 [Configuration (EN)](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/configuration.md) | [Yapılandırma (TR)](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/yapilandirma.md)
 - 💾 [Database Setup (EN)](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/database-setup.md) | [Veritabanı Kurulumu (TR)](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/veritabani-kurulumu.md)
 - 🚀 [Deployment (EN)](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/deployment.md)
+- ☁️ [Cloudflare Containers (EN)](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/deployment/cloudflare-containers.md) | [Cloudflare Containers (TR)](https://github.com/ferdiunal/soketi.rs/blob/main/docs/tr/deployment/cloudflare-containers.md)
 
 ### Advanced Topics
 - 📡 [Redis Adapter](https://github.com/ferdiunal/soketi.rs/blob/main/docs/en/advanced/redis-adapter.md) - Horizontal scaling

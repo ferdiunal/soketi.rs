@@ -12,6 +12,7 @@
 ## Deployment
 * [Docker Rehberi](docker-rehberi)
 * [Docker Deployment](docker-deployment)
+  * [Cloudflare Containers](deployment/cloudflare-containers)
   * [Netlify](deployment/netlify)
   * [Vercel](deployment/vercel)
   * [Reverse Proxy](deployment/reverse-proxy)
@@ -45,6 +46,7 @@ English
 * [Deployment Guide](deployment)
 * [Docker Guide](docker-guide)
 * [Docker Deployment](docker-deployment)
+  * [Cloudflare Containers](deployment/cloudflare-containers)
   * [Netlify](deployment/netlify)
   * [Vercel](deployment/vercel)
   * [Reverse Proxy](deployment/reverse-proxy)

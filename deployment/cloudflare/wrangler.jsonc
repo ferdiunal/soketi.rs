@@ -1,0 +1,64 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "soketi-rs-containers",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-05-19",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "SOKETI_CONTAINER_ROUTING": "single",
+    "SOKETI_CONTAINER_INSTANCE_NAME": "soketi-rs",
+    "SOKETI_CONTAINER_INSTANCE_COUNT": "1",
+    "SOKETI_APP_CONFIG_DRIVER": "array",
+    "SOKETI_APP_CONFIG_INSTANCE_NAME": "default",
+    "SOKETI_EXPOSE_METRICS": "false",
+    "SOKETI_ALLOW_LOCAL_RANDOM_ROUTING": "false",
+    "PUSHER_HOST": "0.0.0.0",
+    "PUSHER_PORT": "6001",
+    "PUSHER_SSL_ENABLED": "false",
+    "PUSHER_METRICS_ENABLED": "true",
+    "PUSHER_METRICS_PORT": "9601",
+    "PUSHER_APP_MANAGER_DRIVER": "array",
+    "PUSHER_DEFAULT_APP_ID": "app-id",
+    "PUSHER_DEFAULT_APP_KEY": "app-key",
+    "PUSHER_CORS_ENABLED": "true",
+    "PUSHER_CORS_ORIGINS": "*",
+    "PUSHER_ADAPTER_DRIVER": "local",
+    "PUSHER_CACHE_DRIVER": "memory",
+    "PUSHER_RATE_LIMITER_DRIVER": "local",
+    "PUSHER_QUEUE_DRIVER": "sync"
+  },
+  "containers": [
+    {
+      "class_name": "SoketiContainer",
+      "name": "soketi-rs",
+      "image": "docker.io/funal/soketi-rs:latest",
+      "max_instances": 10
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "SOKETI_CONTAINER",
+        "class_name": "SoketiContainer"
+      },
+      {
+        "name": "SOKETI_APP_CONFIG",
+        "class_name": "SoketiAppConfig"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["SoketiContainer"]
+    },
+    {
+      "tag": "v2",
+      "new_sqlite_classes": ["SoketiAppConfig"]
+    }
+  ]
+}

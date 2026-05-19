@@ -102,6 +102,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- Enforced WebSocket app policy checks on the deployed route (`c29b3b5`).
+- Bound signed HTTP API requests to their request bodies (`172fb47`).
+- Cleaned WebSocket adapter state on all close paths (`04472e2`).
+- Applied configured HTTP API body limits and live validation config (`31d98fa`).
+
+### Performance
+
+- Reduced local adapter send overhead (`d64b3ed`).
+- Reduced client event hot-path overhead (`2390870`).
+- Stabilized the local end-to-end latency benchmark (`c3bd38a`).
+
+### Documentation
+
+- Added bilingual security policy and recent security hardening summary.
+- Added bilingual Cloudflare Containers deployment documentation.
+
 ## [0.1.0] - 2026-01-25
 
 ### Added

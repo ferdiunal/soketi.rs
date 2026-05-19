@@ -37,6 +37,7 @@ A high-performance, Pusher-compatible WebSocket server written in Rust. Soketi.r
 - [Configuration](#configuration)
 - [Usage Examples](#usage-examples)
 - [Docker Deployment](#docker-deployment)
+- [Cloudflare Containers Deployment](#cloudflare-containers-deployment)
 - [Documentation](#documentation)
 - [API Documentation](#api-documentation)
 - [Client Libraries](#client-libraries)
@@ -312,6 +313,7 @@ Comprehensive documentation is available in multiple languages:
 - [Troubleshooting](https://github.com/ferdiunal/soketi.rs/wiki/Troubleshooting) - Common issues and solutions
 
 #### Deployment Guides
+- [Cloudflare Containers](docs/en/deployment/cloudflare-containers.md) - Deploy the published Docker Hub image to Cloudflare Containers
 - [Vercel Deployment](https://github.com/ferdiunal/soketi.rs/wiki/Vercel-Deployment) - Deploy to Vercel
 - [Netlify Deployment](https://github.com/ferdiunal/soketi.rs/wiki/Netlify-Deployment) - Deploy to Netlify
 - [Reverse Proxy Setup](https://github.com/ferdiunal/soketi.rs/wiki/Reverse-Proxy-Setup) - Caddy and Nginx configuration with HTTP/2 and HTTP/3
@@ -331,6 +333,7 @@ Comprehensive documentation is available in multiple languages:
 - [Sorun Giderme](https://github.com/ferdiunal/soketi.rs/wiki/Sorun-Giderme) - Yaygın sorunlar ve çözümler
 
 #### Deployment Kılavuzları
+- [Cloudflare Containers](docs/tr/deployment/cloudflare-containers.md) - Cloudflare Containers üzerinde dağıtım
 - [Vercel Deployment](https://github.com/ferdiunal/soketi.rs/wiki/Vercel-Deployment-TR) - Vercel'e deployment
 - [Netlify Deployment](https://github.com/ferdiunal/soketi.rs/wiki/Netlify-Deployment-TR) - Netlify'a deployment
 - [Reverse Proxy Kurulumu](https://github.com/ferdiunal/soketi.rs/wiki/Reverse-Proxy-Kurulumu) - Caddy ve Nginx yapılandırması
@@ -357,9 +360,10 @@ All deployment files are organized in the `deployment/` directory:
 
 ```
 deployment/
-├── docker/    # Standard Docker deployment
-├── nginx/     # Nginx reverse proxy setup
-└── caddy/     # Caddy reverse proxy setup (automatic HTTPS)
+├── docker/       # Standard Docker deployment
+├── nginx/        # Nginx reverse proxy setup
+├── caddy/        # Caddy reverse proxy setup (automatic HTTPS)
+└── cloudflare/   # Cloudflare Containers Worker deployment
 ```
 
 ### Standard Docker Deployment
@@ -455,6 +459,24 @@ open http://localhost:3001
 4. **Use health checks** for automatic recovery
 
 5. **Set up log aggregation** (ELK, Loki, etc.)
+
+## Cloudflare Containers Deployment
+
+Cloudflare Containers deployment uses the published Docker Hub image and a Worker proxy:
+
+```bash
+cd deployment/cloudflare
+npm install
+npx wrangler secret put PUSHER_DEFAULT_APP_SECRET
+SOKETI_IMAGE_TAG=v1.2.6 npm run deploy:env
+```
+
+The deployment supports two app configuration modes:
+
+- `SOKETI_APP_CONFIG_DRIVER=array` for app credentials managed through environment variables.
+- `SOKETI_APP_CONFIG_DRIVER=durable-object` for app lists stored in a guarded Cloudflare Durable Object and injected into the container at startup.
+
+See the [Cloudflare Containers deployment guide](docs/en/deployment/cloudflare-containers.md) for topology, metrics, admin endpoints, and Redis/NATS scaling notes.
 
 ## 📚 API Documentation
 

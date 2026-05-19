@@ -15,11 +15,15 @@ deployment/
 │   ├── default.conf
 │   ├── docker-compose.nginx.yml
 │   └── docker-compose.nginx.README.md
-└── caddy/               # Caddy reverse proxy setup
-    ├── Dockerfile.caddy
-    ├── Caddyfile
-    ├── docker-compose.caddy.yml
-    └── docker-compose.caddy.README.md
+├── caddy/               # Caddy reverse proxy setup
+│   ├── Dockerfile.caddy
+│   ├── Caddyfile
+│   ├── docker-compose.caddy.yml
+│   └── docker-compose.caddy.README.md
+└── cloudflare/          # Cloudflare Containers Worker deployment
+    ├── wrangler.jsonc
+    ├── src/index.ts
+    └── README.md
 ```
 
 ## Quick Start
@@ -45,6 +49,15 @@ cd deployment/caddy
 docker-compose -f docker-compose.caddy.yml up -d
 ```
 
+### With Cloudflare Containers
+
+```bash
+cd deployment/cloudflare
+npm install
+npx wrangler secret put PUSHER_DEFAULT_APP_SECRET
+SOKETI_IMAGE_TAG=v1.2.6 npm run deploy:env
+```
+
 ## Documentation
 
 For detailed deployment guides, see:
@@ -52,6 +65,7 @@ For detailed deployment guides, see:
 - [Docker Guide (EN)](../docs/en/docker-guide.md) | [Docker Rehberi (TR)](../docs/tr/docker-rehberi.md)
 - [Docker Deployment (EN)](../docs/en/docker-deployment.md) | [Docker Deployment (TR)](../docs/tr/docker-deployment.md)
 - [Deployment Guide (EN)](../docs/en/deployment.md)
+- [Cloudflare Containers (EN)](../docs/en/deployment/cloudflare-containers.md) | [Cloudflare Containers (TR)](../docs/tr/deployment/cloudflare-containers.md)
 
 ## Docker Hub
 

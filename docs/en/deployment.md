@@ -213,6 +213,21 @@ spec:
 
 ## Cloud Providers
 
+### Cloudflare Containers
+
+Cloudflare Containers can run the published Docker Hub image behind a Cloudflare Worker. The Worker owns the public HTTP/WebSocket surface and proxies requests to the container-enabled Durable Object that controls the `soketi-rs` container.
+
+Use the deployment package in this repository:
+
+```bash
+cd deployment/cloudflare
+npm install
+npx wrangler secret put PUSHER_DEFAULT_APP_SECRET
+SOKETI_IMAGE_TAG=v1.2.6 npm run deploy:env
+```
+
+Cloudflare deployment supports `SOKETI_APP_CONFIG_DRIVER=array` for environment-managed app credentials and `SOKETI_APP_CONFIG_DRIVER=durable-object` for runtime app-list storage in a guarded Durable Object. See [Cloudflare Containers Deployment](deployment/cloudflare-containers.md) for image selection, admin endpoints, metrics, and Redis/NATS scaling notes.
+
 ### AWS
 
 #### ECS Fargate

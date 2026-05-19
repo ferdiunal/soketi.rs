@@ -37,6 +37,7 @@ Rust ile yazılmış, yüksek performanslı, Pusher uyumlu WebSocket sunucusu. S
 - [Yapılandırma](#yapılandırma)
 - [Kullanım Örnekleri](#kullanım-örnekleri)
 - [Docker Dağıtımı](#docker-dağıtımı)
+- [Cloudflare Containers Dağıtımı](#cloudflare-containers-dağıtımı)
 - [Dokümantasyon](#dokümantasyon)
 - [API Dokümantasyonu](#api-dokümantasyonu)
 - [İstemci Kütüphaneleri](#istemci-kütüphaneleri)
@@ -305,9 +306,10 @@ Tüm deployment dosyaları `deployment/` dizininde organize edilmiştir:
 
 ```
 deployment/
-├── docker/    # Standart Docker deployment
-├── nginx/     # Nginx reverse proxy ile
-└── caddy/     # Caddy reverse proxy ile (otomatik HTTPS)
+├── docker/       # Standart Docker dağıtımı
+├── nginx/        # Nginx reverse proxy ile
+├── caddy/        # Caddy reverse proxy ile (otomatik HTTPS)
+└── cloudflare/   # Cloudflare Containers Worker dağıtımı
 ```
 
 ### Standart Docker Deployment
@@ -404,6 +406,24 @@ open http://localhost:3001
 
 5. **Log toplama ayarlayın** (ELK, Loki, vb.)
 
+## Cloudflare Containers Dağıtımı
+
+Cloudflare Containers dağıtımı, yayımlanmış Docker Hub imajını ve önünde çalışan bir Worker proxy'yi kullanır:
+
+```bash
+cd deployment/cloudflare
+npm install
+npx wrangler secret put PUSHER_DEFAULT_APP_SECRET
+SOKETI_IMAGE_TAG=v1.2.6 npm run deploy:env
+```
+
+Dağıtım iki uygulama yapılandırma modunu destekler:
+
+- `SOKETI_APP_CONFIG_DRIVER=array`: uygulama kimlik bilgileri ortam değişkenleriyle yönetilir.
+- `SOKETI_APP_CONFIG_DRIVER=durable-object`: uygulama listesi korumalı Cloudflare Durable Object içinde saklanır ve konteyner başlangıcında enjekte edilir.
+
+Topoloji, metrikler, admin endpointleri ve Redis/NATS ölçeklendirme notları için [Cloudflare Containers dağıtım kılavuzuna](docs/tr/deployment/cloudflare-containers.md) bakın.
+
 ## 📚 Dokümantasyon
 
 Kapsamlı dokümantasyon birden fazla dilde mevcuttur:
@@ -417,6 +437,7 @@ Kapsamlı dokümantasyon birden fazla dilde mevcuttur:
 - [Troubleshooting]wiki/Troubleshooting) - Yaygın sorunlar ve çözümler
 
 #### Deployment Kılavuzları
+- [Cloudflare Containers](docs/en/deployment/cloudflare-containers.md) - Cloudflare Containers üzerinde dağıtım
 - [Vercel Deployment]wiki/Vercel-Deployment) - Vercel'e deployment
 - [Netlify Deployment]wiki/Netlify-Deployment) - Netlify'a deployment
 - [Reverse Proxy Setup]wiki/Reverse-Proxy-Setup) - HTTP/2 ve HTTP/3 ile Caddy ve Nginx yapılandırması
@@ -436,6 +457,7 @@ Kapsamlı dokümantasyon birden fazla dilde mevcuttur:
 - [Sorun Giderme]wiki/Sorun-Giderme) - Yaygın sorunlar ve çözümler
 
 #### Deployment Kılavuzları
+- [Cloudflare Containers](docs/tr/deployment/cloudflare-containers.md) - Cloudflare Containers üzerinde dağıtım
 - [Vercel Deployment]wiki/Vercel-Deployment-TR) - Vercel'e deployment
 - [Netlify Deployment]wiki/Netlify-Deployment-TR) - Netlify'a deployment
 - [Reverse Proxy Kurulumu]wiki/Reverse-Proxy-Kurulumu) - HTTP/2 ve HTTP/3 ile Caddy ve Nginx yapılandırması
