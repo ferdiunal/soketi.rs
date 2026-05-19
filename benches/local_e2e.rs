@@ -34,6 +34,7 @@ const CHURN_CONNECTIONS: usize = 1_000;
 const HTTP_MESSAGES: usize = 500;
 const DEFAULT_REPORT_PATH: &str = "target/benchmarks/local_e2e.json";
 const REPORT_PATH_ENV: &str = "SOKETI_BENCH_REPORT";
+const COOLDOWN_MS_ENV: &str = "SOKETI_BENCH_COOLDOWN_MS";
 
 type WsStream = WebSocketStream<MaybeTlsStream<TcpStream>>;
 type WsWrite = SplitSink<WsStream, Message>;
@@ -166,14 +167,41 @@ async fn wait_for_server(port: u16) {
 }
 
 async fn connect_client(ws_url: &str) -> (WsWrite, WsRead) {
-    let (stream, _) = connect_async(ws_url)
-        .await
-        .expect("failed to connect websocket client");
+    let mut last_error = None;
+    let mut stream = None;
+
+    for attempt in 0..20 {
+        match connect_async(ws_url).await {
+            Ok((mut connected, _)) => {
+                set_tcp_nodelay(&mut connected);
+                stream = Some(connected);
+                break;
+            }
+            Err(error) => {
+                last_error = Some(error);
+                sleep(Duration::from_millis(25 * (attempt + 1))).await;
+            }
+        }
+    }
+
+    let stream = stream.unwrap_or_else(|| {
+        panic!(
+            "failed to connect websocket client after retries: {:?}",
+            last_error
+        )
+    });
+
     let (write, mut read) = stream.split();
     let message = next_json_message(&mut read).await;
     assert_eq!(message["event"], "pusher:connection_established");
 
     (write, read)
+}
+
+fn set_tcp_nodelay(stream: &mut WsStream) {
+    if let MaybeTlsStream::Plain(tcp) = stream.get_mut() {
+        let _ = tcp.set_nodelay(true);
+    }
 }
 
 async fn next_json_message(read: &mut WsRead) -> Value {
@@ -312,6 +340,19 @@ fn reset_report() {
     }
 }
 
+async fn cooldown_after_sample() {
+    let Some(duration) = env::var(COOLDOWN_MS_ENV)
+        .ok()
+        .and_then(|value| value.parse::<u64>().ok())
+        .filter(|duration| *duration > 0)
+        .map(Duration::from_millis)
+    else {
+        return;
+    };
+
+    sleep(duration).await;
+}
+
 fn write_report(report: &ScenarioReport) {
     let path = report_path();
     if let Some(parent) = path.parent() {
@@ -350,6 +391,7 @@ async fn run_ws_connect_handshake(ws_url: String) -> ScenarioReport {
         &histogram,
     );
     write_report(&report);
+    cooldown_after_sample().await;
     report
 }
 
@@ -373,6 +415,7 @@ async fn run_ws_subscribe_public(ws_url: String) -> ScenarioReport {
         &histogram,
     );
     write_report(&report);
+    cooldown_after_sample().await;
     report
 }
 
@@ -435,6 +478,7 @@ async fn run_ws_client_event(
     let attempted = receivers * messages;
     let report = scenario_report(scenario, attempted, delivered, started_at, &histogram);
     write_report(&report);
+    cooldown_after_sample().await;
     report
 }
 
@@ -484,6 +528,7 @@ async fn run_connection_churn(server: BenchServer) -> ScenarioReport {
         &histogram,
     );
     write_report(&report);
+    cooldown_after_sample().await;
     report
 }
 
@@ -543,6 +588,7 @@ async fn run_http_publish_event(server: BenchServer) -> ScenarioReport {
         &histogram,
     );
     write_report(&report);
+    cooldown_after_sample().await;
     report
 }
 
