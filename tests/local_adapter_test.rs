@@ -87,6 +87,51 @@ async fn test_local_adapter_channel_management() {
 }
 
 #[tokio::test]
+async fn test_local_adapter_send_delivers_to_channel_except_socket() {
+    let adapter = LocalAdapter::new();
+    adapter.init().await.unwrap();
+
+    let (tx1, mut rx1) = mpsc::channel::<Message>(100);
+    let socket1 = Socket {
+        id: "socket-1".to_string(),
+        sender: tx1,
+    };
+
+    let (tx2, mut rx2) = mpsc::channel::<Message>(100);
+    let socket2 = Socket {
+        id: "socket-2".to_string(),
+        sender: tx2,
+    };
+
+    adapter.add_socket("app-1", socket1).await.unwrap();
+    adapter.add_socket("app-1", socket2).await.unwrap();
+    adapter
+        .add_to_channel("app-1", "test-channel", "socket-1".to_string())
+        .await
+        .unwrap();
+    adapter
+        .add_to_channel("app-1", "test-channel", "socket-2".to_string())
+        .await
+        .unwrap();
+
+    adapter
+        .send(
+            "app-1",
+            "test-channel",
+            r#"{"event":"client-test"}"#,
+            Some("socket-1"),
+        )
+        .await
+        .unwrap();
+
+    assert!(rx1.try_recv().is_err());
+    assert_eq!(
+        rx2.recv().await.unwrap(),
+        Message::Text(r#"{"event":"client-test"}"#.into())
+    );
+}
+
+#[tokio::test]
 async fn test_local_adapter_presence_management() {
     let adapter = LocalAdapter::new();
     adapter.init().await.unwrap();

@@ -3,10 +3,11 @@ use crate::app::PresenceMember;
 use crate::error::Result;
 use crate::namespace::{Namespace, Socket};
 use async_trait::async_trait;
-use axum::extract::ws::Message;
+use axum::extract::ws::{Message, Utf8Bytes};
 use dashmap::DashMap;
 use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
+use tokio::sync::mpsc::error::TrySendError;
 
 #[derive(Clone)]
 pub struct LocalAdapter {
@@ -118,39 +119,45 @@ impl Adapter for LocalAdapter {
         message: &str,
         except_socket_id: Option<&str>,
     ) -> Result<()> {
-        tracing::debug!("LocalAdapter::send - app_id: {}, channel: {}", app_id, channel);
-        
         if let Some(ns) = self.namespaces.get(app_id) {
-            tracing::debug!("Found namespace for app: {}", app_id);
-            
             if let Some(channel_sockets) = ns.channels.get(channel) {
-                tracing::debug!("Found {} sockets in channel: {}", channel_sockets.len(), channel);
-                
-                // TODO: Optimize parallel sending
+                tracing::debug!(
+                    app_id,
+                    channel,
+                    sockets = channel_sockets.len(),
+                    "local adapter sending channel message"
+                );
+
+                let payload = Utf8Bytes::from(message);
                 for socket_id in channel_sockets.iter() {
                     let socket_id = socket_id.key();
                     if let Some(except) = except_socket_id
                         && socket_id == except
                     {
-                        tracing::debug!("Skipping socket (except): {}", socket_id);
+                        tracing::trace!("Skipping socket (except): {}", socket_id);
                         continue;
                     }
 
                     if let Some(socket) = ns.sockets.get(socket_id) {
-                        tracing::debug!("Sending to socket: {}", socket_id);
-                        let _ = socket
-                            .sender
-                            .send(Message::Text(message.to_string().into()))
-                            .await;
+                        let outgoing = Message::Text(payload.clone());
+                        match socket.sender.try_send(outgoing) {
+                            Ok(()) => {}
+                            Err(TrySendError::Full(outgoing)) => {
+                                let _ = socket.sender.send(outgoing).await;
+                            }
+                            Err(TrySendError::Closed(_)) => {
+                                tracing::trace!("Socket sender closed: {}", socket_id);
+                            }
+                        }
                     } else {
-                        tracing::debug!("Socket not found in sockets map: {}", socket_id);
+                        tracing::trace!("Socket not found in sockets map: {}", socket_id);
                     }
                 }
             } else {
-                tracing::debug!("No sockets found in channel: {}", channel);
+                tracing::trace!("No sockets found in channel: {}", channel);
             }
         } else {
-            tracing::debug!("Namespace not found for app: {}", app_id);
+            tracing::trace!("Namespace not found for app: {}", app_id);
         }
         Ok(())
     }
