@@ -580,7 +580,7 @@ impl Server {
 /// **Validates: Requirements 1.7**
 fn build_app_router(state: Arc<AppState>, path_prefix: &str) -> axum::Router {
     use crate::api;
-    use crate::ws::ws_handler;
+    use crate::ws_handler::ws_handler;
     use axum::{Router, routing::get};
 
     // Build the base router with WebSocket and API routes

@@ -6,13 +6,29 @@ use crate::error::{PusherError, Result};
 use crate::namespace::Socket;
 use crate::pusher::{ConnectionEstablishedData, PusherMessage};
 use crate::state::AppState;
-use axum::extract::ws::{Message, WebSocket};
+use axum::{
+    extract::{
+        Path, State,
+        ws::{Message, WebSocket, WebSocketUpgrade},
+    },
+    response::IntoResponse,
+};
 use futures::{SinkExt, StreamExt};
 use std::sync::Arc;
 use tokio::sync::mpsc;
 use tokio::time::Duration;
 use tracing::{error, info, warn};
 use uuid::Uuid;
+
+pub async fn ws_handler(
+    ws: WebSocketUpgrade,
+    Path(app_key): Path<String>,
+    State(state): State<Arc<AppState>>,
+) -> impl IntoResponse {
+    ws.on_upgrade(move |socket| async move {
+        WsHandler::new(state).handle_connection(socket, app_key).await;
+    })
+}
 
 /// WsHandler manages WebSocket connections and Pusher protocol message handling
 ///
@@ -444,6 +460,17 @@ impl WsHandler {
         format!("{}.{}", part1, part2)
     }
 
+    fn extract_channel_name(message: &PusherMessage) -> Option<String> {
+        message.channel.clone().or_else(|| {
+            message
+                .data
+                .as_ref()
+                .and_then(|data| data.get("channel"))
+                .and_then(|channel| channel.as_str())
+                .map(ToString::to_string)
+        })
+    }
+
     /// Route a Pusher protocol message to the appropriate handler
     ///
     /// This method implements message routing based on the event type:
@@ -572,7 +599,7 @@ impl WsHandler {
         message: PusherMessage,
     ) -> Result<()> {
         // Step 1: Extract channel name from message
-        let channel = match &message.channel {
+        let channel = match Self::extract_channel_name(&message) {
             Some(ch) => ch,
             None => {
                 error!("Subscribe message missing channel field");
@@ -600,7 +627,7 @@ impl WsHandler {
                 "Channel name exceeds maximum length of {} characters",
                 max_channel_length
             ))
-            .to_error_message(Some(channel));
+            .to_error_message(Some(&channel));
             let json = serde_json::to_string(&error_msg)?;
             sender
                 .send(Message::Text(json.into()))
@@ -631,7 +658,7 @@ impl WsHandler {
             let presence_manager =
                 crate::channels::presence::PresenceChannelManager::new(state.adapter.clone());
             presence_manager
-                .join(app, &socket_info, channel, Some(channel_message.clone()))
+                .join(app, &socket_info, &channel, Some(channel_message.clone()))
                 .await
         } else if channel.starts_with("private-encrypted-") {
             // Encrypted private channel
@@ -640,7 +667,7 @@ impl WsHandler {
                 state.adapter.clone(),
             );
             encrypted_manager
-                .join(app, &socket_info, channel, Some(channel_message.clone()))
+                .join(app, &socket_info, &channel, Some(channel_message.clone()))
                 .await
         } else if channel.starts_with("private-") {
             // Private channel
@@ -648,14 +675,14 @@ impl WsHandler {
             let private_manager =
                 crate::channels::private::PrivateChannelManager::new(state.adapter.clone());
             private_manager
-                .join(app, &socket_info, channel, Some(channel_message.clone()))
+                .join(app, &socket_info, &channel, Some(channel_message.clone()))
                 .await
         } else {
             // Public channel
             let public_manager =
                 crate::channels::public::PublicChannelManager::new(state.adapter.clone());
             public_manager
-                .join(app, &socket_info, channel, Some(channel_message.clone()))
+                .join(app, &socket_info, &channel, Some(channel_message.clone()))
                 .await
         };
 
@@ -671,7 +698,7 @@ impl WsHandler {
             // Requirements: 7.4
             let subscription_data = if channel.starts_with("presence-") {
                 // Get current members from adapter
-                match state.adapter.get_channel_members(&app.id, channel).await {
+                match state.adapter.get_channel_members(&app.id, &channel).await {
                     Ok(members) => {
                         // Build presence data
                         let ids: Vec<String> = members.keys().cloned().collect();
@@ -782,7 +809,7 @@ impl WsHandler {
         message: PusherMessage,
     ) -> Result<()> {
         // Step 1: Extract channel name from message
-        let channel = match &message.channel {
+        let channel = match Self::extract_channel_name(&message) {
             Some(ch) => ch,
             None => {
                 error!("Unsubscribe message missing channel field");
@@ -803,18 +830,18 @@ impl WsHandler {
             // Presence channel - use PresenceChannelManager
             let presence_manager =
                 crate::channels::presence::PresenceChannelManager::new(state.adapter.clone());
-            presence_manager.leave(app, socket_id, channel).await?;
+            presence_manager.leave(app, socket_id, &channel).await?;
         } else if channel.starts_with("private-encrypted-") || channel.starts_with("private-") {
             // Private or encrypted private channel - use PublicChannelManager's leave
             // (private channels don't need special leave logic, just remove from adapter)
             let public_manager =
                 crate::channels::public::PublicChannelManager::new(state.adapter.clone());
-            public_manager.leave(&app.id, socket_id, channel).await?;
+            public_manager.leave(&app.id, socket_id, &channel).await?;
         } else {
             // Public channel - use PublicChannelManager
             let public_manager =
                 crate::channels::public::PublicChannelManager::new(state.adapter.clone());
-            public_manager.leave(&app.id, socket_id, channel).await?;
+            public_manager.leave(&app.id, socket_id, &channel).await?;
         }
 
         info!(
@@ -869,7 +896,7 @@ impl WsHandler {
         }
 
         // Step 2: Extract channel name from message
-        let channel = match &message.channel {
+        let channel = match Self::extract_channel_name(&message) {
             Some(ch) => ch,
             None => {
                 error!("Client event missing channel field");
@@ -917,7 +944,7 @@ impl WsHandler {
         // Requirements: 15.3
         let is_subscribed = state
             .adapter
-            .is_in_channel(&app.id, channel, socket_id)
+            .is_in_channel(&app.id, &channel, socket_id)
             .await?;
         if !is_subscribed {
             error!(
@@ -948,7 +975,7 @@ impl WsHandler {
             // Get the namespace to find the user_id for this socket
             if let Some(ns) = state.adapter.get_namespace(&app.id) {
                 ns.presence_socket_to_user
-                    .get(channel)
+                    .get(&channel)
                     .and_then(|socket_to_user| {
                         socket_to_user
                             .get(socket_id)
@@ -990,7 +1017,7 @@ impl WsHandler {
         // Requirements: 15.7
         state
             .adapter
-            .send(&app.id, channel, &json, Some(socket_id))
+            .send(&app.id, &channel, &json, Some(socket_id))
             .await?;
 
         info!(
@@ -1006,7 +1033,7 @@ impl WsHandler {
                 .webhook_sender
                 .send_client_event(
                     app,
-                    channel,
+                    &channel,
                     &message.event,
                     data_value,
                     Some(socket_id),
@@ -1285,6 +1312,41 @@ impl WsHandler {
 
 #[cfg(test)]
 mod tests {
-    // Note: Comprehensive tests for WsHandler are in the tests/ directory
-    // including ws_handler_connection_test.rs, ws_handler_subscribe_test.rs, etc.
+    use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn extracts_subscribe_channel_from_data_payload() {
+        let message = PusherMessage::new("pusher:subscribe".to_string()).with_data(json!({
+            "channel": "public-chat"
+        }));
+
+        assert_eq!(
+            WsHandler::extract_channel_name(&message),
+            Some("public-chat".to_string())
+        );
+    }
+
+    #[test]
+    fn top_level_channel_takes_precedence_over_data_payload() {
+        let message = PusherMessage::new("pusher:subscribe".to_string())
+            .with_channel("public-top-level".to_string())
+            .with_data(json!({
+                "channel": "public-data"
+            }));
+
+        assert_eq!(
+            WsHandler::extract_channel_name(&message),
+            Some("public-top-level".to_string())
+        );
+    }
+
+    #[test]
+    fn missing_subscribe_channel_returns_none() {
+        let message = PusherMessage::new("pusher:subscribe".to_string()).with_data(json!({
+            "auth": "key:signature"
+        }));
+
+        assert_eq!(WsHandler::extract_channel_name(&message), None);
+    }
 }
