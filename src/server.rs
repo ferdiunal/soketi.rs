@@ -188,14 +188,22 @@ impl Server {
 
         let app_manager: Arc<dyn AppManager> = match self.config.app_manager.driver {
             AppManagerDriver::Array => {
-                tracing::debug!("Loading ArrayAppManager with {} apps", self.config.app_manager.array.apps.len());
+                tracing::debug!(
+                    "Loading ArrayAppManager with {} apps",
+                    self.config.app_manager.array.apps.len()
+                );
                 for app in &self.config.app_manager.array.apps {
-                    tracing::debug!("App: id='{}', key='{}', enabled={}", app.id, app.key, app.enabled);
+                    tracing::debug!(
+                        "App: id='{}', key='{}', enabled={}",
+                        app.id,
+                        app.key,
+                        app.enabled
+                    );
                 }
                 Arc::new(ArrayAppManager::new(
                     self.config.app_manager.array.apps.clone(),
                 ))
-            },
+            }
             AppManagerDriver::DynamoDb => {
                 // Create DynamoDB client
                 let aws_config = if let Some(endpoint) = &self.config.app_manager.dynamodb.endpoint
@@ -606,6 +614,7 @@ fn build_app_router(state: Arc<AppState>, path_prefix: &str) -> axum::Router {
 async fn start_metrics_server(state: Arc<AppState>, host: String, port: u16) -> Result<()> {
     use crate::api::metrics;
     use axum::{Router, routing::get};
+    use axum_server::accept::NoDelayAcceptor;
 
     let app = Router::new()
         .route("/metrics", get(metrics))
@@ -616,11 +625,9 @@ async fn start_metrics_server(state: Arc<AppState>, host: String, port: u16) -> 
         .parse::<std::net::SocketAddr>()
         .map_err(|e| PusherError::ServerError(format!("Invalid metrics host/port: {}", e)))?;
 
-    let listener = tokio::net::TcpListener::bind(addr)
-        .await
-        .map_err(|e| PusherError::IoError(e.to_string()))?;
-
-    axum::serve(listener, app)
+    axum_server::bind(addr)
+        .acceptor(NoDelayAcceptor::new())
+        .serve(app.into_make_service())
         .await
         .map_err(|e| PusherError::ServerError(format!("Metrics server error: {}", e)))?;
 
@@ -629,11 +636,11 @@ async fn start_metrics_server(state: Arc<AppState>, host: String, port: u16) -> 
 
 /// Start the server without SSL
 async fn start_without_ssl(app: axum::Router, addr: std::net::SocketAddr) -> Result<()> {
-    let listener = tokio::net::TcpListener::bind(addr)
-        .await
-        .map_err(|e| PusherError::IoError(e.to_string()))?;
+    use axum_server::accept::NoDelayAcceptor;
 
-    axum::serve(listener, app)
+    axum_server::bind(addr)
+        .acceptor(NoDelayAcceptor::new())
+        .serve(app.into_make_service())
         .await
         .map_err(|e| PusherError::ServerError(format!("Server error: {}", e)))?;
 
@@ -651,6 +658,8 @@ async fn start_with_ssl(
     addr: std::net::SocketAddr,
     ssl_config: &SslConfig,
 ) -> Result<()> {
+    use axum_server::accept::NoDelayAcceptor;
+    use axum_server::tls_rustls::RustlsAcceptor;
     use axum_server::tls_rustls::RustlsConfig;
 
     // Load SSL certificate and key
@@ -658,8 +667,11 @@ async fn start_with_ssl(
         .await
         .map_err(|e| PusherError::ServerError(format!("Failed to load SSL certificate: {}", e)))?;
 
+    let acceptor = RustlsAcceptor::new(tls_config).acceptor(NoDelayAcceptor::new());
+
     // Start the server with TLS
-    axum_server::bind_rustls(addr, tls_config)
+    axum_server::bind(addr)
+        .acceptor(acceptor)
         .serve(app.into_make_service())
         .await
         .map_err(|e| PusherError::ServerError(format!("SSL server error: {}", e)))?;
