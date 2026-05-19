@@ -1,50 +1,39 @@
 services:
   # Soketi WebSocket Server
   soketi:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: soketi-server
+    image: ${SOKETI_IMAGE:-funal/soketi-rs:latest}
     restart: unless-stopped
-    ports:
-      # Expose soketi ports for direct access (optional)
-      - "${SOKETI_WS_PORT:-6001}:6001"  # WebSocket port
-      - "${SOKETI_METRICS_PORT:-9601}:9601"  # Metrics port
+    expose:
+      - "6001"  # WebSocket/API port, internal only
+      - "9601"  # Metrics port, internal only
     volumes:
-      # Mount custom config if needed
-      - ${SOKETI_CONFIG_PATH:-./config.json}:/app/config.json:ro
+      - ${PUSHER_CONFIG_PATH:-./config.example.json}:/app/config.json:ro
     environment:
-      # Soketi configuration via environment variables
-      - SOKETI_HOST=${SOKETI_HOST:-0.0.0.0}
-      - SOKETI_PORT=${SOKETI_PORT:-6001}
-      - SOKETI_METRICS_SERVER_PORT=${SOKETI_METRICS_SERVER_PORT:-9601}
-      - SOKETI_DEBUG=${SOKETI_DEBUG:-false}
-      # App configuration
-      - SOKETI_DEFAULT_APP_ID=${SOKETI_DEFAULT_APP_ID:-app-id}
-      - SOKETI_DEFAULT_APP_KEY=${SOKETI_DEFAULT_APP_KEY:-app-key}
-      - SOKETI_DEFAULT_APP_SECRET=${SOKETI_DEFAULT_APP_SECRET:-app-secret}
-      # Enable user authentication
-      - SOKETI_DEFAULT_APP_ENABLE_CLIENT_MESSAGES=${SOKETI_DEFAULT_APP_ENABLE_CLIENT_MESSAGES:-true}
-      - SOKETI_DEFAULT_APP_ENABLED=${SOKETI_DEFAULT_APP_ENABLED:-true}
-      - SOKETI_DEFAULT_APP_MAX_CONNECTIONS=${SOKETI_DEFAULT_APP_MAX_CONNECTIONS:-1000}
-      - SOKETI_DEFAULT_APP_MAX_BACKEND_EVENTS_PER_SEC=${SOKETI_DEFAULT_APP_MAX_BACKEND_EVENTS_PER_SEC:-100}
-      - SOKETI_DEFAULT_APP_MAX_CLIENT_EVENTS_PER_SEC=${SOKETI_DEFAULT_APP_MAX_CLIENT_EVENTS_PER_SEC:-100}
-      - SOKETI_DEFAULT_APP_MAX_READ_REQ_PER_SEC=${SOKETI_DEFAULT_APP_MAX_READ_REQ_PER_SEC:-100}
+      - PUSHER_HOST=${PUSHER_HOST:-0.0.0.0}
+      - PUSHER_PORT=${PUSHER_PORT:-6001}
+      - PUSHER_METRICS_PORT=${PUSHER_METRICS_PORT:-9601}
+      - PUSHER_DEBUG=${PUSHER_DEBUG:-false}
+      - PUSHER_DEFAULT_APP_ID=${PUSHER_DEFAULT_APP_ID:-app-id}
+      - PUSHER_DEFAULT_APP_KEY=${PUSHER_DEFAULT_APP_KEY:-app-key}
+      - PUSHER_DEFAULT_APP_SECRET=${PUSHER_DEFAULT_APP_SECRET:-change-me}
     networks:
       - soketi-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:6001/health"]
+      test: ["CMD", "/usr/local/bin/wget", "-qO", "/dev/null", "http://localhost:6001/ready"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 10s
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
 
   # Caddy Reverse Proxy
   caddy:
     build:
       context: .
       dockerfile: Dockerfile.caddy
-    container_name: caddy-proxy
     restart: unless-stopped
     ports:
       - "${HTTP_PORT:-80}:80"      # HTTP
@@ -60,9 +49,7 @@ services:
       # - ${SSL_CERTS_PATH:-./certs}:/etc/caddy/certs:ro
     environment:
       # Caddy configuration
-      - CADDY_ADMIN=${CADDY_ADMIN:-0.0.0.0:2019}
-      # Optional: Set domain for automatic HTTPS
-      - DOMAIN=${DOMAIN:-}
+      - DOMAIN=${DOMAIN:-soketi.example.com}
     networks:
       - soketi-network
     depends_on:
@@ -74,6 +61,12 @@ services:
       timeout: 10s
       retries: 3
       start_period: 5s
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
 
 networks:
   soketi-network:

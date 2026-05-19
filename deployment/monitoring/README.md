@@ -9,11 +9,12 @@ Prometheus + Grafana monitoring setup for Soketi WebSocket server.
 docker network create soketi-network
 
 # Start monitoring stack
+export GRAFANA_ADMIN_PASSWORD='replace-with-a-strong-password'
 docker-compose -f docker-compose.monitoring.yml up -d
 
 # Access dashboards
 # Prometheus: http://localhost:9090
-# Grafana: http://localhost:3000 (admin/admin)
+# Grafana: http://localhost:3000 (admin / $GRAFANA_ADMIN_PASSWORD)
 ```
 
 ## Services
@@ -24,7 +25,7 @@ docker-compose -f docker-compose.monitoring.yml up -d
 
 ## Grafana Setup
 
-1. Login to Grafana (admin/admin)
+1. Login to Grafana with `admin` and your `GRAFANA_ADMIN_PASSWORD`
 2. Add Prometheus data source: http://prometheus:9090
 3. Import dashboard or create custom panels
 

@@ -554,26 +554,17 @@ describe('Property 7: Reverse Proxy Configuration Correctness', () => {
     const nginxDefaultContent = fs.readFileSync('default.conf', 'utf-8');
     
     // Check for HTTP/2 support
-    const hasHTTP2 = /listen\s+443\s+ssl\s+http2/.test(nginxDefaultContent);
-    
-    // Check for HTTP/3 (QUIC) support
-    const hasHTTP3 = /listen\s+443\s+quic/.test(nginxDefaultContent);
-    
-    // Check for Alt-Svc header (HTTP/3 advertisement)
-    const hasAltSvc = /add_header\s+Alt-Svc\s+'h3=":443"/.test(nginxDefaultContent);
+    const hasHTTP2 = /listen\s+443\s+ssl\s+http2/.test(nginxDefaultContent) ||
+      /http2\s+on;/.test(nginxDefaultContent);
     
     // Check for upstream configuration
     const hasUpstream = /upstream\s+soketi_backend/.test(nginxDefaultContent);
     
     console.log('\nNginx production-ready features:');
     console.log(`  - HTTP/2 support: ${hasHTTP2}`);
-    console.log(`  - HTTP/3 (QUIC) support: ${hasHTTP3}`);
-    console.log(`  - HTTP/3 advertisement (Alt-Svc): ${hasAltSvc}`);
     console.log(`  - Upstream configured: ${hasUpstream}`);
     
     expect(hasHTTP2).toBe(true);
-    expect(hasHTTP3).toBe(true);
-    expect(hasAltSvc).toBe(true);
     expect(hasUpstream).toBe(true);
   });
 });

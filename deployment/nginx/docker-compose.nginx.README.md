@@ -5,7 +5,6 @@ Bu dosya, Soketi WebSocket sunucusu için Nginx reverse proxy yapılandırmasın
 ## Özellikler
 
 - **HTTP/2 Desteği**: Modern HTTP/2 protokolü ile gelişmiş performans
-- **HTTP/3 (QUIC) Desteği**: En yeni HTTP/3 protokolü ile ultra-düşük gecikme
 - **SSL/TLS Şifreleme**: Güvenli bağlantılar için SSL/TLS desteği
 - **WebSocket Proxy**: Soketi sunucusuna WebSocket bağlantıları için proxy
 - **Güvenlik Başlıkları**: HSTS, X-Frame-Options, X-Content-Type-Options ve daha fazlası
@@ -51,20 +50,19 @@ cp /path/to/your/privkey.pem certs/key.pem
 
 ```bash
 # Soketi Configuration
-SOKETI_HOST=0.0.0.0
-SOKETI_PORT=6001
-SOKETI_DEBUG=false
+SOKETI_IMAGE=funal/soketi-rs:latest
+PUSHER_HOST=0.0.0.0
+PUSHER_PORT=6001
+PUSHER_DEBUG=false
 
 # Soketi App Configuration
-SOKETI_DEFAULT_APP_ID=app-id
-SOKETI_DEFAULT_APP_KEY=app-key
-SOKETI_DEFAULT_APP_SECRET=app-secret
+PUSHER_DEFAULT_APP_ID=app-id
+PUSHER_DEFAULT_APP_KEY=app-key
+PUSHER_DEFAULT_APP_SECRET=change-me
 
 # Nginx Configuration
 HTTP_PORT=80
 HTTPS_PORT=443
-HTTP3_PORT=443
-NGINX_HOST=soketi.example.com
 
 # SSL Certificate Paths
 SSL_CERT_PATH=./certs/cert.pem
@@ -107,9 +105,8 @@ wscat -c wss://localhost/app/app-key?protocol=7
 Varsayılan portlar:
 - **80**: HTTP (HTTPS'e yönlendirir)
 - **443**: HTTPS (HTTP/2)
-- **443/udp**: HTTP/3 (QUIC)
-- **6001**: Soketi WebSocket (isteğe bağlı doğrudan erişim)
-- **9601**: Soketi Metrics (isteğe bağlı)
+- **6001**: Soketi WebSocket/API (Docker network içinde)
+- **9601**: Soketi Metrics (Docker network içinde)
 
 ### SSL/TLS Sertifikaları
 
@@ -141,7 +138,7 @@ Soketi yapılandırması environment değişkenleri veya config dosyası ile yap
 
 ```bash
 # Config dosyası kullan
-SOKETI_CONFIG_PATH=./custom-config.json
+PUSHER_CONFIG_PATH=./custom-config.json
 ```
 
 ## Production Deployment
@@ -168,8 +165,7 @@ docker-compose -f docker-compose.nginx.yml logs -f nginx
 # Soketi loglarını izle
 docker-compose -f docker-compose.nginx.yml logs -f soketi
 
-# Metrics endpoint'ini kontrol et
-curl http://localhost:9601/metrics
+# Metrics endpoint'i Docker network içinde `soketi:9601/metrics` olarak izlenir
 ```
 
 ### 4. Scaling
@@ -226,7 +222,7 @@ docker-compose -f docker-compose.nginx.yml ps
 
 # Health check endpoint'ini manuel test et
 docker-compose -f docker-compose.nginx.yml exec nginx curl http://localhost/health
-docker-compose -f docker-compose.nginx.yml exec soketi curl http://localhost:6001/health
+docker-compose -f docker-compose.nginx.yml exec soketi /usr/local/bin/wget -qO /dev/null http://localhost:6001/ready
 ```
 
 ## Servisleri Durdurma
@@ -282,7 +278,6 @@ location /app/ {
 
 ## Referanslar
 
-- [Nginx HTTP/3 Documentation](https://nginx.org/en/docs/http/ngx_http_v3_module.html)
 - [Soketi Documentation](https://docs.soketi.app/)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
 - [Let's Encrypt](https://letsencrypt.org/)

@@ -39,14 +39,14 @@ cp .env.caddy.example .env
 ```
 
 Edit `.env` and update the values, especially:
-- `SOKETI_DEFAULT_APP_ID`
-- `SOKETI_DEFAULT_APP_KEY`
-- `SOKETI_DEFAULT_APP_SECRET`
+- `PUSHER_DEFAULT_APP_ID`
+- `PUSHER_DEFAULT_APP_KEY`
+- `PUSHER_DEFAULT_APP_SECRET`
 - `DOMAIN` (for production with HTTPS)
 
-### 2. Development Mode (HTTP only)
+### 2. Start Services
 
-For local development without HTTPS:
+Set `DOMAIN` in `.env` before starting. For local testing, point that domain to `127.0.0.1` with `/etc/hosts` or your local DNS.
 
 ```bash
 # Start services
@@ -59,7 +59,7 @@ docker-compose -f docker-compose.caddy.yml logs -f
 docker-compose -f docker-compose.caddy.yml down
 ```
 
-Access soketi at: `http://localhost/app/`
+Access soketi at: `https://your-domain.com/app/`
 
 ### 3. Using Environment Variables
 
@@ -74,13 +74,13 @@ docker-compose -f docker-compose.caddy.yml up -d
 
 **Option 2: Inline environment variables**
 ```bash
-SOKETI_DEFAULT_APP_KEY=my-key docker-compose -f docker-compose.caddy.yml up -d
+PUSHER_DEFAULT_APP_KEY=my-key docker-compose -f docker-compose.caddy.yml up -d
 ```
 
 **Option 3: Export environment variables**
 ```bash
-export SOKETI_DEFAULT_APP_KEY=my-key
-export SOKETI_DEFAULT_APP_SECRET=my-secret
+export PUSHER_DEFAULT_APP_KEY=my-key
+export PUSHER_DEFAULT_APP_SECRET=my-secret
 docker-compose -f docker-compose.caddy.yml up -d
 ```
 
@@ -91,20 +91,12 @@ For production with automatic HTTPS:
 1. **Configure environment variables** in `.env`:
    ```bash
    DOMAIN=your-domain.com
-   SOKETI_DEFAULT_APP_ID=your-app-id
-   SOKETI_DEFAULT_APP_KEY=your-app-key
-   SOKETI_DEFAULT_APP_SECRET=your-secure-secret
+   PUSHER_DEFAULT_APP_ID=your-app-id
+   PUSHER_DEFAULT_APP_KEY=your-app-key
+   PUSHER_DEFAULT_APP_SECRET=your-secure-secret
    ```
 
-2. **Update Caddyfile** with your domain:
-   ```caddyfile
-   your-domain.com {
-       reverse_proxy /app/* {
-           to soketi:6001
-           # ... rest of config
-       }
-   }
-   ```
+2. **Set `DOMAIN`** to your actual domain. The Caddyfile reads it automatically.
 
 3. **Start services**:
    ```bash
@@ -123,15 +115,13 @@ The setup supports configuration via environment variables. See `.env.caddy.exam
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `SOKETI_DEFAULT_APP_ID` | `app-id` | Application ID |
-| `SOKETI_DEFAULT_APP_KEY` | `app-key` | Application key |
-| `SOKETI_DEFAULT_APP_SECRET` | `app-secret` | Application secret |
-| `SOKETI_DEFAULT_APP_MAX_CONNECTIONS` | `1000` | Max concurrent connections |
+| `PUSHER_DEFAULT_APP_ID` | `app-id` | Application ID |
+| `PUSHER_DEFAULT_APP_KEY` | `app-key` | Application key |
+| `PUSHER_DEFAULT_APP_SECRET` | `app-secret` | Application secret |
 | `DOMAIN` | - | Domain for automatic HTTPS |
 | `HTTP_PORT` | `80` | HTTP port |
 | `HTTPS_PORT` | `443` | HTTPS port |
-| `SOKETI_WS_PORT` | `6001` | Soketi WebSocket port |
-| `SOKETI_METRICS_PORT` | `9601` | Soketi metrics port |
+| `PUSHER_METRICS_PORT` | `9601` | Soketi metrics port |
 
 ### Soketi Configuration
 
@@ -139,10 +129,9 @@ Configure soketi via environment variables in `docker-compose.caddy.yml`:
 
 ```yaml
 environment:
-  - SOKETI_DEFAULT_APP_ID=your-app-id
-  - SOKETI_DEFAULT_APP_KEY=your-app-key
-  - SOKETI_DEFAULT_APP_SECRET=your-app-secret
-  - SOKETI_DEFAULT_APP_MAX_CONNECTIONS=1000
+  - PUSHER_DEFAULT_APP_ID=your-app-id
+  - PUSHER_DEFAULT_APP_KEY=your-app-key
+  - PUSHER_DEFAULT_APP_SECRET=your-app-secret
 ```
 
 Or mount a custom `config.json`:
@@ -168,8 +157,8 @@ Default ports:
 - **80**: HTTP (Caddy)
 - **443**: HTTPS/HTTP2 (Caddy)
 - **443/udp**: HTTP/3 QUIC (Caddy)
-- **6001**: Soketi WebSocket (exposed for direct access)
-- **9601**: Soketi Metrics (exposed for monitoring)
+- **6001**: Soketi WebSocket (internal)
+- **9601**: Soketi Metrics (internal)
 
 To change ports, modify the `ports` section in `docker-compose.caddy.yml`.
 
@@ -233,7 +222,7 @@ docker run --rm -v caddy_data:/data -v $(pwd):/backup alpine tar xzf /backup/cad
 
 Both services include health checks:
 
-- **Soketi**: Checks `/health` endpoint every 30s
+- **Soketi**: Checks `/ready` endpoint every 30s
 - **Caddy**: Checks `/health` endpoint every 30s
 
 View health status:
@@ -257,11 +246,7 @@ docker-compose -f docker-compose.caddy.yml logs -f soketi
 
 ### Soketi Metrics
 
-Access Prometheus metrics at: `http://localhost:9601/metrics`
-
-### Caddy Admin API
-
-Access Caddy's admin API at: `http://localhost:2019/`
+Prometheus can scrape metrics inside the Docker network at `soketi:9601/metrics`.
 
 ## Scaling
 
@@ -274,7 +259,7 @@ docker-compose -f docker-compose.caddy.yml up -d --scale soketi=3
 Update Caddyfile to load balance:
 
 ```caddyfile
-:80 {
+{$DOMAIN:your-domain.com} {
     reverse_proxy /app/* {
         to soketi:6001 soketi:6001 soketi:6001
         lb_policy round_robin
@@ -302,7 +287,7 @@ docker-compose -f docker-compose.caddy.yml logs soketi
 
 ```bash
 # Install wscat if needed: npm install -g wscat
-wscat -c ws://localhost/app/app-key
+wscat -c wss://your-domain.com/app/app-key
 ```
 
 ### Verify HTTP/3 Support
@@ -332,11 +317,11 @@ curl --http3 https://your-domain.com/health
 3. **WebSocket connection fails**:
    - Verify soketi is running: `docker-compose -f docker-compose.caddy.yml ps`
    - Check soketi logs: `docker-compose -f docker-compose.caddy.yml logs soketi`
-   - Test direct connection: `wscat -c ws://localhost:6001/app/app-key`
+   - Test through Caddy: `wscat -c wss://your-domain.com/app/app-key`
 
 ## Security Considerations
 
-1. **Change default credentials**: Update `SOKETI_DEFAULT_APP_*` environment variables
+1. **Change default credentials**: Update `PUSHER_DEFAULT_APP_*` environment variables
 2. **Use strong secrets**: Generate secure random strings for app secrets
 3. **Firewall rules**: Only expose necessary ports (80, 443)
 4. **Regular updates**: Keep Docker images updated
@@ -348,7 +333,7 @@ curl --http3 https://your-domain.com/health
 - [ ] Copy `.env.caddy.example` to `.env` and configure
 - [ ] Update domain name in Caddyfile
 - [ ] Change default soketi credentials in `.env`
-- [ ] Generate strong random secrets for `SOKETI_DEFAULT_APP_SECRET`
+- [ ] Generate strong random secrets for `PUSHER_DEFAULT_APP_SECRET`
 - [ ] Configure firewall rules
 - [ ] Set up log monitoring
 - [ ] Configure backup for Caddy volumes
@@ -376,15 +361,16 @@ const pusher = new Pusher('your-app-key', {
 });
 ```
 
-### Development (HTTP)
+### Local Development With A Test Domain
 
 ```typescript
 const pusher = new Pusher('app-key', {
-  wsHost: 'localhost',
-  wsPort: 80,
-  forceTLS: false,
-  encrypted: false,
-  enabledTransports: ['ws'],
+  wsHost: 'soketi.local',
+  wsPort: 443,
+  wssPort: 443,
+  forceTLS: true,
+  encrypted: true,
+  enabledTransports: ['wss'],
   cluster: 'mt1',
 });
 ```

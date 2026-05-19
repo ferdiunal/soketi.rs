@@ -106,17 +106,15 @@ Caddy will automatically load balance across all instances.
 
 Caddy supports HTTP/3 (QUIC) by default. No additional configuration needed!
 
-## Development Mode
+## Local Development With A Test Domain
 
-For local development without a domain:
+For local development, point a test domain such as `soketi.local` to `127.0.0.1` and set `DOMAIN=soketi.local` in `.env`.
 
 ```caddyfile
-:80 {
+{$DOMAIN:soketi.local} {
     reverse_proxy soketi:6001
 }
 ```
-
-This disables automatic HTTPS for local testing.
 
 ## Documentation
 
