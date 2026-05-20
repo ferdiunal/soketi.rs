@@ -99,6 +99,44 @@ async fn test_private_channel_join_with_valid_auth() {
 }
 
 #[tokio::test]
+async fn test_private_channel_join_uses_resolved_channel_when_message_channel_is_missing() {
+    let adapter = Arc::new(LocalAdapter::new()) as Arc<dyn Adapter>;
+    adapter.init().await.unwrap();
+    let manager = PrivateChannelManager::new(adapter.clone());
+
+    let app = create_test_app();
+    let socket = create_test_socket("socket-1");
+
+    adapter.add_socket(&app.id, socket.clone()).await.unwrap();
+
+    let channel = "private-tenant.01ks2dffp902d2mymhey89ze1c.chat.01KS2DWBDCX9DN2KMJXBXZ9GJA";
+    let auth = generate_auth_signature(&app.key, &app.secret, &socket.id, channel);
+
+    let message = PusherMessage {
+        event: "pusher:subscribe".to_string(),
+        data: Some(json!({
+            "auth": auth,
+            "channel": channel
+        })),
+        channel: None,
+        socket_id: None,
+    };
+
+    let response = manager.join(&app, &socket, channel, Some(message)).await;
+
+    assert!(
+        response.success,
+        "Join should use the resolved channel parameter when the Pusher JS frame has no top-level channel: {:?}",
+        response
+    );
+    let is_in = adapter
+        .is_in_channel(&app.id, channel, &socket.id)
+        .await
+        .unwrap();
+    assert!(is_in, "Socket should be in the resolved channel");
+}
+
+#[tokio::test]
 async fn test_private_channel_join_with_invalid_auth() {
     // Create adapter and channel manager
     let adapter = Arc::new(LocalAdapter::new()) as Arc<dyn Adapter>;

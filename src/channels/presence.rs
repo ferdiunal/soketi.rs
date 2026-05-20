@@ -197,10 +197,11 @@ impl PresenceChannelManager {
         &self,
         app: &App,
         socket_id: &str,
+        channel: &str,
         message: &PusherMessage,
         signature_to_check: &str,
     ) -> bool {
-        let expected = self.get_expected_signature(app, socket_id, message);
+        let expected = self.get_expected_signature(app, socket_id, channel, message);
         expected == signature_to_check
     }
 
@@ -208,15 +209,20 @@ impl PresenceChannelManager {
         &self,
         app: &App,
         socket_id: &str,
+        channel: &str,
         message: &PusherMessage,
     ) -> String {
-        let data_to_sign = self.get_data_to_sign_for_signature(socket_id, message);
+        let data_to_sign = self.get_data_to_sign_for_signature(socket_id, channel, message);
         let signature = self.sign(&app.secret, &data_to_sign);
         format!("{}:{}", app.key, signature)
     }
 
-    fn get_data_to_sign_for_signature(&self, socket_id: &str, message: &PusherMessage) -> String {
-        let channel = message.channel.as_deref().unwrap_or("");
+    fn get_data_to_sign_for_signature(
+        &self,
+        socket_id: &str,
+        channel: &str,
+        message: &PusherMessage,
+    ) -> String {
         let channel_data = message
             .data
             .as_ref()
@@ -309,7 +315,7 @@ impl ChannelManager for PresenceChannelManager {
             }
         };
 
-        if !self.signature_is_valid(app, &socket.id, &message, passed_signature) {
+        if !self.signature_is_valid(app, &socket.id, channel, &message, passed_signature) {
             return JoinResponse {
                 success: false,
                 error_code: Some(4009),
