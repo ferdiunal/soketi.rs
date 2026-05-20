@@ -7,6 +7,20 @@ use std::process;
 #[derive(Debug, Deserialize)]
 struct LatencyStats {
     p95_us: u64,
+    #[serde(default)]
+    under_1ms_count: u64,
+    #[serde(default)]
+    under_1ms_rate: f64,
+}
+
+#[derive(Debug, Default, Deserialize)]
+struct ResourceStats {
+    #[serde(default)]
+    process_cpu_avg_percent: f64,
+    #[serde(default)]
+    process_cpu_peak_percent: f64,
+    #[serde(default)]
+    process_memory_peak_mb: f64,
 }
 
 #[derive(Debug, Deserialize)]
@@ -15,6 +29,8 @@ struct ScenarioReport {
     throughput_per_second: f64,
     delivery_rate: f64,
     latency: LatencyStats,
+    #[serde(default)]
+    resources: ResourceStats,
 }
 
 #[derive(Debug)]
@@ -42,10 +58,20 @@ fn main() {
         options.threshold_percent
     );
     println!(
-        "{:<36} {:>14} {:>10} {:>10} {:>10} {:>10}  status",
-        "scenario", "throughput/s", "delta", "p95_us", "delta", "delivery"
+        "{:<36} {:>14} {:>10} {:>10} {:>10} {:>10} {:>9} {:>10} {:>9} {:>9} {:>8}  status",
+        "scenario",
+        "throughput/s",
+        "delta",
+        "p95_us",
+        "delta",
+        "delivery",
+        "<1ms",
+        "<1ms%",
+        "rss_mb",
+        "cpu_avg",
+        "cpu_pk"
     );
-    println!("{}", "-".repeat(111));
+    println!("{}", "-".repeat(168));
 
     let scenarios = baseline
         .keys()
@@ -81,32 +107,42 @@ fn main() {
                 };
 
                 println!(
-                    "{:<36} {:>14.2} {:>+9.2}% {:>10} {:>+9.2}% {:>9.4}  {}",
+                    "{:<36} {:>14.2} {:>+9.2}% {:>10} {:>+9.2}% {:>9.4} {:>9} {:>9.2}% {:>9.1} {:>8.1}% {:>7.1}%  {}",
                     scenario,
                     right.throughput_per_second,
                     throughput_delta,
                     right.latency.p95_us,
                     p95_delta,
                     right.delivery_rate,
+                    right.latency.under_1ms_count,
+                    right.latency.under_1ms_rate * 100.0,
+                    right.resources.process_memory_peak_mb,
+                    right.resources.process_cpu_avg_percent,
+                    right.resources.process_cpu_peak_percent,
                     status
                 );
             }
             (Some(_), None) => {
                 regressions += 1;
                 println!(
-                    "{:<36} {:>14} {:>10} {:>10} {:>10} {:>10}  missing",
-                    scenario, "-", "-", "-", "-", "-"
+                    "{:<36} {:>14} {:>10} {:>10} {:>10} {:>10} {:>9} {:>10} {:>9} {:>9} {:>8}  missing",
+                    scenario, "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"
                 );
             }
             (None, Some(right)) => {
                 println!(
-                    "{:<36} {:>14.2} {:>10} {:>10} {:>10} {:>9.4}  new",
+                    "{:<36} {:>14.2} {:>10} {:>10} {:>10} {:>9.4} {:>9} {:>9.2}% {:>9.1} {:>8.1}% {:>7.1}%  new",
                     scenario,
                     right.throughput_per_second,
                     "-",
                     right.latency.p95_us,
                     "-",
-                    right.delivery_rate
+                    right.delivery_rate,
+                    right.latency.under_1ms_count,
+                    right.latency.under_1ms_rate * 100.0,
+                    right.resources.process_memory_peak_mb,
+                    right.resources.process_cpu_avg_percent,
+                    right.resources.process_cpu_peak_percent
                 );
             }
             (None, None) => unreachable!(),

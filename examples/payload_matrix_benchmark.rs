@@ -12,7 +12,11 @@ use std::env;
 use std::fs;
 use std::net::TcpListener;
 use std::path::PathBuf;
+use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::thread;
 use std::time::{Duration, Instant};
+use sysinfo::{ProcessRefreshKind, ProcessesToUpdate, System};
 use tokio::net::TcpStream;
 use tokio::time::sleep;
 use tokio_tungstenite::tungstenite::Message;
@@ -24,6 +28,8 @@ const APP_SECRET: &str = "payload_matrix_secret";
 const DEFAULT_REPORT_PATH: &str = "target/benchmarks/payload-matrix.json";
 const REPORT_PATH_ENV: &str = "SOKETI_BENCH_REPORT";
 const SCALE_ENV: &str = "SOKETI_BENCH_MATRIX_SCALE";
+const RESOURCE_SAMPLE_INTERVAL: Duration = Duration::from_millis(50);
+const UNDER_1MS_US: u64 = 1_000;
 
 type WsStream = WebSocketStream<MaybeTlsStream<TcpStream>>;
 type WsWrite = SplitSink<WsStream, Message>;
@@ -54,6 +60,19 @@ struct LatencyStats {
     p99_us: u64,
     p999_us: u64,
     max_us: u64,
+    #[serde(default)]
+    under_1ms_count: u64,
+    #[serde(default)]
+    under_1ms_rate: f64,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+struct ResourceStats {
+    sample_count: u64,
+    process_cpu_avg_percent: f64,
+    process_cpu_peak_percent: f64,
+    process_memory_peak_bytes: u64,
+    process_memory_peak_mb: f64,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -65,6 +84,7 @@ struct ScenarioReport {
     throughput_per_second: f64,
     delivery_rate: f64,
     latency: LatencyStats,
+    resources: ResourceStats,
 }
 
 fn main() {
@@ -338,6 +358,7 @@ async fn run_ws_client_event_payload(ws_url: String, scenario: PayloadScenario) 
     let messages = scaled_messages(scenario.messages);
     let payload = payload_string(scenario.payload_bytes);
     let started_at = Instant::now();
+    let resource_monitor = ResourceMonitor::start();
 
     let (mut sender_write, mut sender_read) = connect_client(&ws_url).await;
     subscribe_public(&mut sender_write, &mut sender_read, &channel).await;
@@ -357,11 +378,20 @@ async fn run_ws_client_event_payload(ws_url: String, scenario: PayloadScenario) 
     }
 
     let (delivered, histogram) = receiver_task.await.expect("receiver task failed");
+    let duration = started_at.elapsed();
+    let resources = resource_monitor.finish();
 
     let _ = sender_write.close().await;
     let _ = receiver_write.close().await;
 
-    scenario_report(scenario.name, messages, delivered, started_at, &histogram)
+    scenario_report(
+        scenario.name,
+        messages,
+        delivered,
+        duration,
+        &histogram,
+        resources,
+    )
 }
 
 fn stats_from_histogram(histogram: &Histogram<u64>) -> LatencyStats {
@@ -369,12 +399,17 @@ fn stats_from_histogram(histogram: &Histogram<u64>) -> LatencyStats {
         return LatencyStats::default();
     }
 
+    let under_1ms_count = histogram.count_between(1, UNDER_1MS_US - 1);
+    let total_count = histogram.len();
+
     LatencyStats {
         p50_us: histogram.value_at_quantile(0.50),
         p95_us: histogram.value_at_quantile(0.95),
         p99_us: histogram.value_at_quantile(0.99),
         p999_us: histogram.value_at_quantile(0.999),
         max_us: histogram.max(),
+        under_1ms_count,
+        under_1ms_rate: under_1ms_count as f64 / total_count as f64,
     }
 }
 
@@ -382,10 +417,10 @@ fn scenario_report(
     scenario: &str,
     attempted: usize,
     delivered: usize,
-    started_at: Instant,
+    duration: Duration,
     histogram: &Histogram<u64>,
+    resources: ResourceStats,
 ) -> ScenarioReport {
-    let duration = started_at.elapsed();
     let throughput_per_second = if duration.is_zero() {
         0.0
     } else {
@@ -405,7 +440,96 @@ fn scenario_report(
         throughput_per_second,
         delivery_rate,
         latency: stats_from_histogram(histogram),
+        resources,
     }
+}
+
+#[derive(Debug)]
+struct ResourceMonitor {
+    stop: Arc<AtomicBool>,
+    handle: thread::JoinHandle<ResourceStats>,
+}
+
+impl ResourceMonitor {
+    fn start() -> Self {
+        let stop = Arc::new(AtomicBool::new(false));
+        let thread_stop = Arc::clone(&stop);
+        let handle = thread::spawn(move || sample_process_resources(thread_stop));
+
+        Self { stop, handle }
+    }
+
+    fn finish(self) -> ResourceStats {
+        self.stop.store(true, Ordering::Relaxed);
+        self.handle.join().unwrap_or_default()
+    }
+}
+
+#[derive(Debug, Default)]
+struct ResourceAccumulator {
+    sample_count: u64,
+    cpu_total_percent: f64,
+    cpu_peak_percent: f64,
+    memory_peak_bytes: u64,
+}
+
+impl ResourceAccumulator {
+    fn record(&mut self, cpu_percent: f32, memory_bytes: u64) {
+        let cpu_percent = cpu_percent as f64;
+
+        self.sample_count += 1;
+        self.cpu_total_percent += cpu_percent;
+        self.cpu_peak_percent = self.cpu_peak_percent.max(cpu_percent);
+        self.memory_peak_bytes = self.memory_peak_bytes.max(memory_bytes);
+    }
+
+    fn into_stats(self) -> ResourceStats {
+        let process_cpu_avg_percent = if self.sample_count == 0 {
+            0.0
+        } else {
+            self.cpu_total_percent / self.sample_count as f64
+        };
+
+        ResourceStats {
+            sample_count: self.sample_count,
+            process_cpu_avg_percent,
+            process_cpu_peak_percent: self.cpu_peak_percent,
+            process_memory_peak_bytes: self.memory_peak_bytes,
+            process_memory_peak_mb: bytes_to_mb(self.memory_peak_bytes),
+        }
+    }
+}
+
+fn sample_process_resources(stop: Arc<AtomicBool>) -> ResourceStats {
+    let pid = match sysinfo::get_current_pid() {
+        Ok(pid) => pid,
+        Err(_) => return ResourceStats::default(),
+    };
+    let pids = [pid];
+    let refresh_kind = ProcessRefreshKind::nothing().with_cpu().with_memory();
+    let mut system = System::new();
+    let mut accumulator = ResourceAccumulator::default();
+
+    system.refresh_processes_specifics(ProcessesToUpdate::Some(&pids), false, refresh_kind);
+
+    loop {
+        thread::sleep(RESOURCE_SAMPLE_INTERVAL);
+        system.refresh_processes_specifics(ProcessesToUpdate::Some(&pids), false, refresh_kind);
+
+        if let Some(process) = system.process(pid) {
+            accumulator.record(process.cpu_usage(), process.memory());
+        }
+
+        if stop.load(Ordering::Relaxed) {
+            break;
+        }
+    }
+
+    accumulator.into_stats()
+}
+
+fn bytes_to_mb(bytes: u64) -> f64 {
+    bytes as f64 / 1024.0 / 1024.0
 }
 
 fn report_path() -> PathBuf {
@@ -471,5 +595,37 @@ mod tests {
         assert_eq!(value["data"]["sequence"], 7);
         assert_eq!(value["data"]["sent_at_us"], 1234);
         assert_eq!(value["data"]["payload"].as_str().unwrap().len(), 1024);
+    }
+
+    #[test]
+    fn latency_stats_include_under_1ms_count_and_rate() {
+        let mut histogram =
+            Histogram::<u64>::new_with_bounds(1, 60_000_000, 3).expect("histogram init failed");
+
+        histogram.record(250).expect("record 250us");
+        histogram.record(999).expect("record 999us");
+        histogram.record(1_000).expect("record 1ms");
+        histogram.record(1_500).expect("record 1.5ms");
+
+        let stats = stats_from_histogram(&histogram);
+
+        assert_eq!(stats.under_1ms_count, 2);
+        assert_eq!(stats.under_1ms_rate, 0.5);
+    }
+
+    #[test]
+    fn resource_accumulator_reports_average_peak_and_memory_mb() {
+        let mut accumulator = ResourceAccumulator::default();
+
+        accumulator.record(25.0, 10 * 1024 * 1024);
+        accumulator.record(75.0, 12 * 1024 * 1024);
+
+        let stats = accumulator.into_stats();
+
+        assert_eq!(stats.sample_count, 2);
+        assert_eq!(stats.process_cpu_avg_percent, 50.0);
+        assert_eq!(stats.process_cpu_peak_percent, 75.0);
+        assert_eq!(stats.process_memory_peak_bytes, 12 * 1024 * 1024);
+        assert_eq!(stats.process_memory_peak_mb, 12.0);
     }
 }
