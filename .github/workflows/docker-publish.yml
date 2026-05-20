@@ -17,6 +17,28 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: Setup Rust
+      uses: actions-rust-lang/setup-rust-toolchain@v1
+      with:
+        toolchain: stable
+
+    - name: Add Linux musl targets
+      run: rustup target add x86_64-unknown-linux-musl aarch64-unknown-linux-musl
+
+    - name: Install cargo-zigbuild
+      run: |
+        pip3 install ziglang
+        cargo install cargo-zigbuild --locked
+
+    - name: Build Linux binaries for Docker context
+      run: |
+        cargo zigbuild --release --target x86_64-unknown-linux-musl --locked
+        cargo zigbuild --release --target aarch64-unknown-linux-musl --locked
+        cp target/x86_64-unknown-linux-musl/release/soketi-rs soketi-rs-amd64
+        cp target/aarch64-unknown-linux-musl/release/soketi-rs soketi-rs-arm64
+        chmod +x soketi-rs-amd64 soketi-rs-arm64
+        ls -lh soketi-rs-amd64 soketi-rs-arm64
     
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3

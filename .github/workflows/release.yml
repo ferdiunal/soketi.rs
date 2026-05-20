@@ -233,11 +233,16 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_VERSION: ${{ needs.release.outputs.new_release_version }}
         run: |
-          gh release download "v${RELEASE_VERSION}"             --repo "${{ github.repository }}"             --pattern "soketi-rs-linux-amd64.tar.gz"             --pattern "soketi-rs-linux-arm64.tar.gz"
+          gh release download "v${RELEASE_VERSION}" \
+            --repo "${{ github.repository }}" \
+            --pattern "soketi-rs-linux-amd64.tar.gz" \
+            --pattern "soketi-rs-linux-arm64.tar.gz"
           tar -xzf soketi-rs-linux-amd64.tar.gz
           tar -xzf soketi-rs-linux-arm64.tar.gz
           cp soketi-rs-linux-amd64/soketi-rs soketi-rs-amd64
           cp soketi-rs-linux-arm64/soketi-rs soketi-rs-arm64
+          chmod +x soketi-rs-amd64 soketi-rs-arm64
+          ls -lh soketi-rs-amd64 soketi-rs-arm64
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

@@ -8,6 +8,9 @@ on:
         required: true
         type: string
 
+permissions:
+  contents: read
+
 env:
   DOCKER_USERNAME: funal
   IMAGE_NAME: soketi-rs
@@ -21,6 +24,9 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.inputs.version }}
+        fetch-depth: 0
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
@@ -50,6 +56,22 @@ jobs:
         echo "major_minor=$(echo "$VERSION" | cut -d. -f1-2)" >> $GITHUB_OUTPUT
         echo "major=$(echo "$VERSION" | cut -d. -f1)" >> $GITHUB_OUTPUT
         echo "Building version: $VERSION"
+
+    - name: Download pre-built Linux binaries
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        VERSION: ${{ steps.version.outputs.version }}
+      run: |
+        gh release download "v${VERSION}" \
+          --repo "${{ github.repository }}" \
+          --pattern "soketi-rs-linux-amd64.tar.gz" \
+          --pattern "soketi-rs-linux-arm64.tar.gz"
+        tar -xzf soketi-rs-linux-amd64.tar.gz
+        tar -xzf soketi-rs-linux-arm64.tar.gz
+        cp soketi-rs-linux-amd64/soketi-rs soketi-rs-amd64
+        cp soketi-rs-linux-arm64/soketi-rs soketi-rs-arm64
+        chmod +x soketi-rs-amd64 soketi-rs-arm64
+        ls -lh soketi-rs-amd64 soketi-rs-arm64
     
     - name: Build and push multi-arch image
       uses: docker/build-push-action@v5
